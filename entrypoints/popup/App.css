@@ -30,8 +30,10 @@ button:disabled {
 }
 
 .app {
-  width: 460px;
-  min-height: 500px;
+  width: 560px;
+  min-height: 560px;
+  max-height: 640px;
+  overflow: auto;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -55,6 +57,19 @@ h1 {
   font-size: 24px;
 }
 
+h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+h3 {
+  margin: 16px 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #71717a;
+}
+
 .header p {
   margin: 0;
   color: #71717a;
@@ -69,16 +84,18 @@ h1 {
   white-space: nowrap;
 }
 
+.summary-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
 .summary {
-  margin-top: 22px;
   background: white;
   border: 1px solid #e4e4e7;
   border-radius: 12px;
   padding: 14px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .summary-number {
@@ -92,16 +109,59 @@ h1 {
   color: #71717a;
 }
 
-.events {
+.toolbar {
   margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+}
+
+.filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter,
+.ghost {
+  background: white;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.filter.active {
+  background: #18181b;
+  color: white;
+  border-color: #18181b;
+}
+
+.layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 12px;
+}
+
+.events {
+  min-width: 0;
 }
 
 .event {
+  width: 100%;
+  text-align: left;
   background: white;
   border: 1px solid #e4e4e7;
   border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+  color: inherit;
+}
+
+.event.selected {
+  border-color: #18181b;
 }
 
 .event-top {
@@ -112,28 +172,62 @@ h1 {
 
 .domain {
   font-size: 14px;
+  font-weight: 700;
 }
 
 .title {
   margin-top: 3px;
   font-size: 12px;
   color: #71717a;
+  text-transform: capitalize;
 }
 
-.protocol {
+.severity {
   font-size: 10px;
   font-weight: 700;
   padding: 4px 7px;
   border-radius: 6px;
   height: fit-content;
+  text-transform: uppercase;
 }
 
-.secure {
+.severity.none,
+.severity.low {
   background: #e8f5e9;
 }
 
-.insecure {
+.severity.medium {
   background: #fff3e0;
+}
+
+.severity.high,
+.severity.critical {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.event-footer {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #71717a;
+  text-transform: capitalize;
+}
+
+.detail {
+  background: white;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
 }
 
 .url {
@@ -141,27 +235,75 @@ h1 {
   padding: 8px;
   background: #f4f4f5;
   border-radius: 6px;
-
-  font-family: monospace;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 10px;
-
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.event-footer {
-  margin-top: 10px;
+ul {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.45;
+}
 
+.chips {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 
-  font-size: 10px;
+.chip {
+  font-size: 11px;
+  background: #f4f4f5;
+  border-radius: 999px;
+  padding: 4px 8px;
+  text-transform: capitalize;
+}
+
+.checklist {
+  list-style: none;
+  padding-left: 0;
+}
+
+.checklist label {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.checklist .done {
+  text-decoration: line-through;
   color: #71717a;
 }
 
+.detail-actions {
+  margin-top: 16px;
+}
+
+.resolved-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.privacy {
+  margin-top: 14px;
+  font-size: 11px;
+  color: #71717a;
+  line-height: 1.4;
+}
+
 .empty {
+  margin-top: 24px;
   padding: 30px;
   text-align: center;
   color: #71717a;
+  background: white;
+  border: 1px dashed #d4d4d8;
+  border-radius: 12px;
 }

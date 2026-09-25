@@ -24,3 +24,11 @@ web-ext.config.ts
 *.njsproj
 *.sln
 *.sw?
+
+# Local secrets / env
+.env
+.env.*
+!.env.example
+
+# Local previews
+popup-preview*.png

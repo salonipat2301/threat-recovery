@@ -1,38 +1,36 @@
-import {
-  collectPageSignals
-} from "../lib/collectors/page-signals";
-
-import {
-  collectPermissionSignals
-} from "../lib/collectors/permissions";
-
+import { collectPageSignals } from "../lib/collectors/page-signals";
+import { collectPermissionSignals } from "../lib/collectors/permissions";
+import { showRiskWarningOverlay } from "../lib/ui/warning-overlay";
+import type { RiskVerdict } from "../lib/types/risk-verdict";
+import type { SiteObservation } from "../lib/types/site-observation";
 
 export default defineContentScript({
-  matches: [
-    "http://*/*",
-    "https://*/*"
-  ],
-
-  // Run inside top page + iframes
+  matches: ["http://*/*", "https://*/*"],
   allFrames: true,
 
   async main() {
-
     let previousSignals = "";
 
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message?.type !== "SHOW_RISK_WARNING") {
+        return;
+      }
+
+      if (window.top !== window) {
+        return;
+      }
+
+      showRiskWarningOverlay(
+        message.observation as SiteObservation,
+        message.verdict as RiskVerdict,
+        message.requestId as string
+      );
+    });
+
     async function collectAndSend() {
-
-      // 1. Inspect this frame's DOM
-      const pageSignals =
-        collectPageSignals();
-
-      // 2. Check whether this is the main/top frame
-      const isTopFrame =
-        window.top === window;
-
-      // 3. Prevent duplicate messages
-      const serialized =
-        JSON.stringify(pageSignals);
+      const pageSignals = collectPageSignals();
+      const isTopFrame = window.top === window;
+      const serialized = JSON.stringify(pageSignals);
 
       if (serialized === previousSignals) {
         return;
@@ -40,57 +38,33 @@ export default defineContentScript({
 
       previousSignals = serialized;
 
+      const permissions = isTopFrame
+        ? await collectPermissionSignals()
+        : null;
 
-      // 4. Only collect permissions for the main page
-      // We don't want iframe permissions confusing us.
-      const permissions =
-        isTopFrame
-          ? await collectPermissionSignals()
-          : null;
-
-
-      // 5. Send this frame's observation to background.ts
       await chrome.runtime.sendMessage({
         type: "SITE_SIGNALS",
-
-        frameUrl:
-          window.location.href,
-
+        frameUrl: window.location.href,
         isTopFrame,
-
         pageSignals,
-
         permissions,
       });
     }
 
-
-    // Run once when the page/frame loads
     await collectAndSend();
 
+    let timer: ReturnType<typeof setTimeout>;
 
-    // Re-check when dynamic websites modify the DOM
-    let timer:
-      ReturnType<typeof setTimeout>;
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        void collectAndSend();
+      }, 500);
+    });
 
-    const observer =
-      new MutationObserver(() => {
-
-        clearTimeout(timer);
-
-        timer = setTimeout(() => {
-          collectAndSend();
-        }, 500);
-
-      });
-
-
-    observer.observe(
-      document.documentElement,
-      {
-        childList: true,
-        subtree: true,
-      }
-    );
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
   },
 });
