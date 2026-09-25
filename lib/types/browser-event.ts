@@ -8,11 +8,7 @@ export interface BrowserEvent {
   domain: string;
   title?: string;
   timestamp: number;
+  isHttps: boolean;
 
-  source: "history" | "live_navigation";
-
-  signals?: {
-    hasPasswordField?: boolean;
-    hasLoginForm?: boolean;
-  };
+  source: BrowserEventSource;
 }

@@ -3,6 +3,7 @@ import type { BrowserEvent } from "../types/browser-event";
 export async function getRecentHistory(
   hoursBack = 24
 ): Promise<BrowserEvent[]> {
+
   const endTime = Date.now();
   const startTime =
     endTime - hoursBack * 60 * 60 * 1000;
@@ -21,24 +22,33 @@ export async function getRecentHistory(
         item.lastVisitTime
     )
     .map((item) => {
+
       const url = item.url!;
+      const parsedUrl = new URL(url);
 
       return {
         id: `history-${item.id}-${item.lastVisitTime}`,
+
         url,
-        domain: getDomain(url),
-        title: item.title || undefined,
-        timestamp: item.lastVisitTime!,
-        source: "history" as const,
+
+        domain:
+          parsedUrl.hostname.replace(/^www\./, ""),
+
+        title:
+          item.title || undefined,
+
+        timestamp:
+          item.lastVisitTime!,
+
+        isHttps:
+          parsedUrl.protocol === "https:",
+
+        source:
+          "history" as const,
       };
     })
-    .sort((a, b) => b.timestamp - a.timestamp);
-}
-
-function getDomain(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return "unknown";
-  }
+    .sort(
+      (a, b) =>
+        b.timestamp - a.timestamp
+    );
 }
