@@ -1,6 +1,11 @@
+import { collectPageSignals } from "../lib/collectors/page-signals";
+
 export default defineContentScript({
-  matches: ['*://*.google.com/*'],
+  matches: ["http://*/*", "https://*/*"],
+
   main() {
-    console.log('Hello content.');
+    const signals = collectPageSignals();
+
+    console.log("PAGE_SIGNALS", signals);
   },
 });
