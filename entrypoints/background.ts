@@ -1,4 +1,5 @@
 import type { BrowserEvent } from "../lib/types/browser-event";
+import { checkThreatIntelligence } from "../lib/risk/threat-intelligence";
 
 export default defineBackground(() => {
   console.log("Threat Recovery background started");
@@ -15,6 +16,14 @@ export default defineBackground(() => {
     if (!event) return;
 
     console.log("LIVE_BROWSER_EVENT", event);
+
+    checkThreatIntelligence(event.url)
+      .then((verdict) => {
+        console.log("THREAT_VERDICT", verdict);
+      })
+      .catch((error) => {
+        console.error("THREAT_LOOKUP_ERROR", error);
+      });
   });
 });
 
