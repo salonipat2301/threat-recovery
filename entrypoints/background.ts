@@ -1,275 +1,441 @@
 import type { BrowserEvent } from "../lib/types/browser-event";
-import { browser as chrome } from "wxt/browser";
-import type { RiskAssessment } from "../lib/types/risk-assessment";
+import { browser as chrome, type Browser } from "wxt/browser";
 import type { SiteObservation } from "../lib/types/site-observation";
-import type { SecurityIncident, WarningDecision } from "../lib/types/security-incident";
-import { assessRisk } from "../lib/assess-risk";
-import { resolveSecurityIncident, saveSecurityIncident, saveWarningDecision } from "../lib/security-storage";
+import type { PageSignals } from "../lib/collectors/page-signals";
+import type { PermissionSignals } from "../lib/collectors/permissions";
+import type { RiskVerdict } from "../lib/types/risk-verdict";
+import { assessRisk } from "../lib/risk/assess-risk";
+import { persistIncidentFromDecision } from "../lib/router/evidence-router";
+import {
+  clearIncidents,
+  listIncidents,
+  updateIncident,
+} from "../lib/storage/incidents";
+import {
+  clearBrowsingHistory,
+  listBrowsingHistory,
+  recordBrowserEvent,
+  updateBrowserEventRisk,
+} from "../lib/storage/history";
+import { classifyCategory, getRecentHistory } from "../lib/collectors/history";
+import {
+  flushEmailNotificationQueue,
+  getEmailSettings,
+  listQueuedEmailNotifications,
+  queueHighRiskIncidentEmail,
+  saveEmailSettings,
+} from "../lib/storage/email-notifications";
 
-interface PendingWarning {
-  tabId: number;
-  targetUrl: string;
-  assessment: RiskAssessment;
+interface TabState {
+  url: string;
+  pageSignals: PageSignals;
+  permissions: PermissionSignals | null;
+  latestVerdict?: RiskVerdict;
+  lastWarnedKey?: string;
+  pendingWarning?: {
+    requestId: string;
+    observation: SiteObservation;
+    verdict: RiskVerdict;
+  };
 }
 
-const processingTabs = new Set<number>();
-const latestObservation = new Map<number, SiteObservation>();
-const SESSION_PREFIX = "threat-recovery:";
+const tabStates = new Map<number, TabState>();
+
+async function reassessTab(tabId: number): Promise<{
+  url?: string;
+  verdict: RiskVerdict | null;
+}> {
+  if (!Number.isInteger(tabId)) return { verdict: null };
+
+  const tab = await chrome.tabs.get(tabId);
+  if (!tab.url) return { verdict: null };
+
+  const state = tabStates.get(tabId);
+  if (state?.url === tab.url && state.latestVerdict) {
+    return { url: tab.url, verdict: state.latestVerdict };
+  }
+
+  try {
+    const response = await chrome.tabs.sendMessage(tabId, {
+      type: "REASSESS_CURRENT_PAGE",
+    });
+    return { url: tab.url, verdict: response?.verdict ?? null };
+  } catch {
+    // Browser-owned pages and pages without extension access cannot be scanned.
+    return { url: tab.url, verdict: null };
+  }
+}
 
 export default defineBackground(() => {
   console.log("Threat Recovery background started");
 
-  chrome.webNavigation.onCompleted.addListener((details) => {
-    if (details.frameId !== 0) return;
-    const event = createBrowserEvent(details.url, details.timeStamp);
-    if (event) console.log("LIVE_BROWSER_EVENT", event);
+  chrome.alarms.create("email-notification-retry", { periodInMinutes: 1 });
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name === "email-notification-retry") {
+      void flushEmailNotificationQueue();
+    }
+  });
+  chrome.runtime.onStartup.addListener(() => {
+    void flushEmailNotificationQueue();
+  });
+
+  chrome.webNavigation.onCompleted.addListener(handleFullNavigation);
+  chrome.webNavigation.onHistoryStateUpdated.addListener(handleSpaNavigation);
+
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message?.type === "SITE_SIGNALS") {
+      void handleSiteSignals(message, sender)
+        .then((verdict) => sendResponse({ verdict: verdict ?? null }))
+        .catch((error) => {
+          console.error("Failed to assess current page", error);
+          sendResponse({ verdict: null });
+        });
+      return true;
+    }
+
+    if (message?.type === "RISK_WARNING_DECISION") {
+      void handleWarningDecision(message, sender).then((incident) => {
+        sendResponse({ ok: true, incident });
+      });
+      return true;
+    }
+
+    if (message?.type === "GET_INCIDENTS") {
+      void listIncidents().then((incidents) => {
+        sendResponse({ incidents });
+      });
+      return true;
+    }
+
+    if (message?.type === "GET_EMAIL_SETTINGS") {
+      void Promise.all([getEmailSettings(), listQueuedEmailNotifications()]).then(
+        ([settings, queue]) => sendResponse({ settings, queuedCount: queue.length })
+      );
+      return true;
+    }
+
+    if (message?.type === "SAVE_EMAIL_SETTINGS") {
+      void saveEmailSettings(message.settings).then(async () => {
+        await flushEmailNotificationQueue();
+        sendResponse({ ok: true });
+      });
+      return true;
+    }
+
+    if (message?.type === "FLUSH_EMAIL_QUEUE") {
+      void flushEmailNotificationQueue().then(() => sendResponse({ ok: true }));
+      return true;
+    }
+
+    if (message?.type === "GET_TAB_RISK") {
+      void reassessTab(message.tabId)
+        .then(sendResponse)
+        .catch(() => sendResponse({ url: undefined, verdict: null }));
+      return true;
+    }
+
+    if (message?.type === "UPDATE_INCIDENT") {
+      void updateIncident(message.id, message.patch).then((incident) => {
+        sendResponse({ incident });
+      });
+      return true;
+    }
+
+    if (message?.type === "CLEAR_INCIDENTS") {
+      void Promise.all([clearIncidents(), clearBrowsingHistory()]).then(() => {
+        sendResponse({ ok: true });
+      });
+      return true;
+    }
+
+    if (message?.type === "GET_HISTORY") {
+      void Promise.all([listBrowsingHistory(), getRecentHistory(24 * 30)]).then(
+        ([savedEvents, browserEvents]) => {
+          const merged = [...savedEvents];
+          for (const event of browserEvents) {
+            const saved = merged.find((item) => item.url === event.url);
+            if (!saved) merged.push(event);
+          }
+          merged.sort((a, b) => b.timestamp - a.timestamp);
+          sendResponse({ events: merged.slice(0, 500) });
+        }
+      );
+      return true;
+    }
   });
 
   chrome.tabs.onRemoved.addListener((tabId) => {
-    void clearWarningForTab(tabId);
-  });
-
-  chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
-    if (changeInfo.url && !changeInfo.url.startsWith(chrome.runtime.getURL("/warning.html"))) {
-      void clearWarningForTab(tabId);
-    }
-  });
-
-  chrome.runtime.onMessage.addListener((message: unknown, sender, sendResponse) => {
-    if (!isRecord(message) || typeof message.type !== "string") return false;
-
-    if (message.type === "SITE_OBSERVATION") {
-      if (sender.tab?.id !== undefined && isSiteObservation(message.observation)) {
-        latestObservation.set(sender.tab.id, message.observation);
-        void processObservations(sender.tab.id);
-      }
-      return false;
-    }
-
-    if (message.type === "GET_WARNING" && typeof message.id === "string") {
-      void getPendingWarning(message.id).then(sendResponse);
-      return true;
-    }
-
-    if (message.type === "LEAVE_WARNING" && typeof message.id === "string") {
-      void handleWarningDecision(message.id, sender.tab?.id, "LEFT_SITE")
-        .then(() => sendResponse({ ok: true }))
-        .catch((error) => sendResponse({ ok: false, error: errorMessage(error) }));
-      return true;
-    }
-
-    if (message.type === "CONTINUE_WARNING" && typeof message.id === "string") {
-      void handleWarningDecision(message.id, sender.tab?.id, "CONTINUED")
-        .then(() => sendResponse({ ok: true }))
-        .catch((error) => sendResponse({ ok: false, error: errorMessage(error) }));
-      return true;
-    }
-
-    if (message.type === "RESOLVE_INCIDENT" && typeof message.id === "string") {
-      void resolveSecurityIncident(message.id)
-        .then(() => sendResponse({ ok: true }))
-        .catch((error) => sendResponse({ ok: false, error: errorMessage(error) }));
-      return true;
-    }
-
-    return false;
+    tabStates.delete(tabId);
   });
 });
 
-async function processObservations(tabId: number): Promise<void> {
-  if (processingTabs.has(tabId)) return;
-  processingTabs.add(tabId);
+async function handleSiteSignals(
+  message: {
+    pageSignals: PageSignals;
+    permissions: PermissionSignals | null;
+    isTopFrame: boolean;
+  },
+  sender: Browser.runtime.MessageSender
+) {
+  const tabId = sender.tab?.id;
+  const url = sender.tab?.url;
+
+  if (tabId === undefined || !url) {
+    return;
+  }
+
+  const previous = tabStates.get(tabId);
+
+  const combinedSignals: PageSignals = {
+    hasUsernameField:
+      (previous?.pageSignals.hasUsernameField ?? false) ||
+      message.pageSignals.hasUsernameField,
+    hasPasswordField:
+      (previous?.pageSignals.hasPasswordField ?? false) ||
+      message.pageSignals.hasPasswordField,
+    hasOtpField:
+      (previous?.pageSignals.hasOtpField ?? false) ||
+      message.pageSignals.hasOtpField,
+    hasPaymentField:
+      (previous?.pageSignals.hasPaymentField ?? false) ||
+      message.pageSignals.hasPaymentField,
+    hasFileUpload:
+      (previous?.pageSignals.hasFileUpload ?? false) ||
+      message.pageSignals.hasFileUpload,
+  };
+
+  let permissions = previous?.permissions ?? null;
+
+  if (message.isTopFrame && message.permissions) {
+    permissions = message.permissions;
+  }
+
+  tabStates.set(tabId, {
+    url,
+    pageSignals: combinedSignals,
+    permissions,
+    latestVerdict: previous?.latestVerdict,
+    lastWarnedKey: previous?.lastWarnedKey,
+    pendingWarning: previous?.pendingWarning,
+  });
+
+  if (!permissions) {
+    return;
+  }
+
+  const observation = createSiteObservation(
+    url,
+    combinedSignals,
+    permissions
+  );
+
+  if (!observation) {
+    return;
+  }
+
+  console.log("SITE_OBSERVATION", observation);
+
+  const verdict = await assessRisk(observation);
+  await updateBrowserEventRisk(url, verdict);
+  const currentState = tabStates.get(tabId);
+  if (currentState?.url === url) {
+    tabStates.set(tabId, { ...currentState, latestVerdict: verdict });
+  }
+  console.log("RISK_VERDICT", verdict);
+
+  if (!verdict.shouldWarn) {
+    return;
+  }
+
+  const warnKey = `${observation.domain}|${verdict.severity}|${verdict.score}`;
+  const state = tabStates.get(tabId);
+
+  if (!state || state.lastWarnedKey === warnKey || state.pendingWarning) {
+    return;
+  }
+
+  const requestId = crypto.randomUUID();
+
+  tabStates.set(tabId, {
+    ...state,
+    lastWarnedKey: warnKey,
+    pendingWarning: {
+      requestId,
+      observation,
+      verdict,
+    },
+  });
 
   try {
-    while (latestObservation.has(tabId)) {
-      const observation = latestObservation.get(tabId)!;
-      latestObservation.delete(tabId);
-
-      if (await hasActiveWarning(tabId)) continue;
-      if (await isTemporarilyAllowed(tabId, observation.url)) continue;
-
-      const assessment = await assessRisk(observation);
-      if (latestObservation.has(tabId)) continue;
-      if (!assessment.shouldWarn) continue;
-
-      const tab = await chrome.tabs.get(tabId).catch(() => undefined);
-      if (!tab?.url || !samePage(tab.url, observation.url)) continue;
-
-      const id = crypto.randomUUID();
-      const warning: PendingWarning = {
-        tabId,
-        targetUrl: observation.url,
-        assessment,
-      };
-      await chrome.storage.session.set({ [`${SESSION_PREFIX}warning:${id}`]: warning });
-      await chrome.storage.session.set({ [`${SESSION_PREFIX}active:${tabId}`]: id });
-
-      const warningUrl = `${chrome.runtime.getURL("/warning.html")}?id=${encodeURIComponent(id)}`;
-      try {
-        await chrome.tabs.update(tabId, { url: warningUrl });
-      } catch (error) {
-        await clearPendingWarning(id, tabId);
-        throw error;
-      }
-      break;
-    }
+    await chrome.tabs.sendMessage(tabId, {
+      type: "SHOW_RISK_WARNING",
+      requestId,
+      observation,
+      verdict,
+    });
   } catch (error) {
-    console.error("Threat assessment failed:", error);
-  } finally {
-    processingTabs.delete(tabId);
-    if (latestObservation.has(tabId)) void processObservations(tabId);
+    console.warn("Failed to show warning overlay", error);
+    tabStates.set(tabId, {
+      ...tabStates.get(tabId)!,
+      pendingWarning: undefined,
+    });
   }
 }
 
 async function handleWarningDecision(
-  id: string,
-  senderTabId: number | undefined,
-  decision: WarningDecision["decision"],
-): Promise<void> {
-  const warning = await getPendingWarning(id);
-  if (!warning || senderTabId !== warning.tabId) {
-    throw new Error("This warning is no longer active.");
+  message: {
+    requestId: string;
+    decision: "left" | "continued";
+  },
+  sender: Browser.runtime.MessageSender
+) {
+  const tabId = sender.tab?.id;
+
+  if (tabId === undefined) {
+    return null;
   }
 
-  const assessment = warning.assessment;
-  const decisionRecord: WarningDecision = {
-    id: crypto.randomUUID(),
-    url: warning.targetUrl,
-    domain: assessment.observation.domain,
-    decisionTimestamp: Date.now(),
-    decision,
-    warningFollowed: decision === "LEFT_SITE",
-    threatScore: assessment.score,
-    severity: assessment.severity,
-  };
+  const state = tabStates.get(tabId);
+  const pending = state?.pendingWarning;
 
-  await saveWarningDecision(decisionRecord);
-
-  if (decision === "CONTINUED") {
-    const incident: SecurityIncident = {
-      id: crypto.randomUUID(),
-      url: warning.targetUrl,
-      domain: assessment.observation.domain,
-      detectionTimestamp: assessment.observation.timestamp,
-      threatScore: assessment.score,
-      severity: assessment.severity,
-      threatCategory: assessment.category,
-      threatIntelligenceSources: assessment.threatVerdict.status === "KNOWN_THREAT"
-        ? [assessment.threatVerdict.provider]
-        : [],
-      reasons: assessment.reasons,
-      userContinued: true,
-      potentialExposureTypes: assessment.potentialExposureTypes,
-      status: "UNRESOLVED",
-    };
-    await saveSecurityIncident(incident);
-    await chrome.storage.session.set({
-      [`${SESSION_PREFIX}allow:${warning.tabId}`]: {
-        url: warning.targetUrl,
-        expiresAt: Date.now() + 2 * 60 * 1000,
-      },
-    });
+  if (!pending || pending.requestId !== message.requestId) {
+    return null;
   }
 
-  await clearPendingWarning(id, warning.tabId);
+  tabStates.set(tabId, {
+    ...state,
+    pendingWarning: undefined,
+  });
 
-  setTimeout(() => {
-    if (decision === "LEFT_SITE") {
-      chrome.tabs.goBack(warning.tabId, () => {
-        if (chrome.runtime.lastError) {
-          void chrome.tabs.update(warning.tabId, { url: "chrome://newtab/" });
-        }
-      });
-    } else {
-      void chrome.tabs.update(warning.tabId, { url: warning.targetUrl });
+  console.log("USER_DECISION", {
+    decision: message.decision,
+    domain: pending.observation.domain,
+    severity: pending.verdict.severity,
+  });
+
+  if (message.decision === "left") {
+    try {
+      await chrome.tabs.update(tabId, { url: "chrome://newtab/" });
+    } catch {
+      await chrome.tabs.remove(tabId).catch(() => undefined);
     }
-  }, 150);
-}
-
-async function getPendingWarning(id: string): Promise<PendingWarning | null> {
-  const key = `${SESSION_PREFIX}warning:${id}`;
-  const result = await chrome.storage.session.get(key);
-  return (result[key] as PendingWarning | undefined) ?? null;
-}
-
-async function hasActiveWarning(tabId: number): Promise<boolean> {
-  const key = `${SESSION_PREFIX}active:${tabId}`;
-  const result = await chrome.storage.session.get(key);
-  return typeof result[key] === "string";
-}
-
-async function isTemporarilyAllowed(tabId: number, url: string): Promise<boolean> {
-  const key = `${SESSION_PREFIX}allow:${tabId}`;
-  const result = await chrome.storage.session.get(key);
-  const allow = result[key] as { url: string; expiresAt: number } | undefined;
-  if (!allow) return false;
-  if (allow.expiresAt <= Date.now()) {
-    await chrome.storage.session.remove(key);
-    return false;
+    return null;
   }
-  return samePage(allow.url, url);
-}
 
-async function clearPendingWarning(id: string, tabId: number): Promise<void> {
-  await chrome.storage.session.remove([
-    `${SESSION_PREFIX}warning:${id}`,
-    `${SESSION_PREFIX}active:${tabId}`,
-  ]);
-}
+  const incident = await persistIncidentFromDecision(
+    pending.observation,
+    pending.verdict,
+    "continued"
+  );
 
-async function clearWarningForTab(tabId: number): Promise<void> {
-  const key = `${SESSION_PREFIX}active:${tabId}`;
-  const result = await chrome.storage.session.get(key);
-  const id = result[key];
-  if (typeof id === "string") await clearPendingWarning(id, tabId);
-}
+  if (incident) {
+    console.log("SECURITY_INCIDENT", incident);
 
-function samePage(first: string, second: string): boolean {
-  try {
-    const a = new URL(first);
-    const b = new URL(second);
-    return a.origin === b.origin && a.pathname === b.pathname && a.search === b.search;
-  } catch {
-    return first === second;
+    await queueHighRiskIncidentEmail(incident);
+    void flushEmailNotificationQueue();
+
+    if (
+      incident.severity === "high" ||
+      incident.severity === "critical"
+    ) {
+      await chrome.notifications.create(incident.id, {
+        type: "basic",
+        iconUrl: "icon/128.png",
+        title: "Unresolved security risk",
+        message: `${incident.domain} marked ${incident.severity} after you continued.`,
+        priority: 2,
+      });
+    }
   }
+
+  return incident;
 }
 
-function isSiteObservation(value: unknown): value is SiteObservation {
-  if (!isRecord(value)) return false;
-  if (typeof value.url !== "string" || typeof value.domain !== "string") return false;
-  if (value.protocol !== "HTTP" && value.protocol !== "HTTPS") return false;
-  const booleanFields = [
-    "usernameFieldDetected", "passwordFieldDetected", "otpFieldDetected",
-    "paymentFieldDetected", "fileUploadDetected", "cameraPermission",
-    "microphonePermission", "locationPermission", "notificationPermission",
-  ];
-  if (typeof value.timestamp !== "number"
-    || !booleanFields.every((field) => typeof value[field] === "boolean")) return false;
-  try {
-    return /^https?:$/.test(new URL(value.url).protocol);
-  } catch {
-    return false;
+function handleFullNavigation(
+  details: Browser.webNavigation.WebNavigationFramedCallbackDetails
+) {
+  if (details.frameId !== 0) {
+    return;
   }
+
+  tabStates.delete(details.tabId);
+  logNavigation(details);
 }
 
-function isRecord(value: unknown): value is Record<string, any> {
-  return typeof value === "object" && value !== null;
+function handleSpaNavigation(
+  details: Browser.webNavigation.WebNavigationFramedCallbackDetails
+) {
+  if (details.frameId !== 0) {
+    return;
+  }
+
+  logNavigation(details);
 }
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Unknown error";
+function logNavigation(
+  details: Browser.webNavigation.WebNavigationFramedCallbackDetails
+) {
+  const event = createBrowserEvent(details.url, details.timeStamp);
+
+  if (!event) {
+    return;
+  }
+
+  void recordBrowserEvent(event);
 }
 
-function createBrowserEvent(url: string, timestamp: number): BrowserEvent | null {
+function createBrowserEvent(
+  url: string,
+  timestamp: number
+): BrowserEvent | null {
   try {
     const parsedUrl = new URL(url);
-    if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") return null;
+
+    if (
+      parsedUrl.protocol !== "http:" &&
+      parsedUrl.protocol !== "https:"
+    ) {
+      return null;
+    }
+
     return {
       id: crypto.randomUUID(),
       url,
       domain: parsedUrl.hostname.replace(/^www\./, ""),
       timestamp,
+      isHttps: parsedUrl.protocol === "https:",
+      category: classifyCategory(url),
+      riskScore: parsedUrl.protocol === "http:" ? 25 : 0,
+      riskLevel: "low",
       source: "live_navigation",
+    };
+  } catch {
+    return null;
+  }
+}
+
+function createSiteObservation(
+  url: string,
+  pageSignals: SiteObservation["pageSignals"],
+  permissions: SiteObservation["permissions"]
+): SiteObservation | null {
+  try {
+    const parsedUrl = new URL(url);
+
+    if (
+      parsedUrl.protocol !== "http:" &&
+      parsedUrl.protocol !== "https:"
+    ) {
+      return null;
+    }
+
+    return {
+      url,
+      domain: parsedUrl.hostname.replace(/^www\./, ""),
+      timestamp: Date.now(),
+      isHttps: parsedUrl.protocol === "https:",
+      pageSignals,
+      permissions,
     };
   } catch {
     return null;

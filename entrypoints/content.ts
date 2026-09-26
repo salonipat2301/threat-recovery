@@ -1,76 +1,86 @@
+import { collectPageSignals } from "../lib/collectors/page-signals";
+import { collectPermissionSignals } from "../lib/collectors/permissions";
+import { showRiskWarningOverlay } from "../lib/ui/warning-overlay";
+import type { RiskVerdict } from "../lib/types/risk-verdict";
 import type { SiteObservation } from "../lib/types/site-observation";
 import { browser as chrome } from "wxt/browser";
 
 export default defineContentScript({
   matches: ["http://*/*", "https://*/*"],
-  runAt: "document_idle",
-  main() {
-    let lastSignature = "";
-    let scanTimer: ReturnType<typeof setTimeout> | undefined;
+  allFrames: true,
 
-    const scanAndReport = async () => {
-      const observation = await collectObservation();
-      const signature = JSON.stringify({ ...observation, timestamp: 0 });
-      if (signature === lastSignature) return;
-      lastSignature = signature;
+  async main() {
+    let previousSignals = "";
 
-      void chrome.runtime.sendMessage({
-        type: "SITE_OBSERVATION",
-        observation,
-      }).catch(() => undefined);
-    };
+    chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+      if (message?.type !== "SHOW_RISK_WARNING") {
+        if (message?.type === "REASSESS_CURRENT_PAGE") {
+          if (window.top !== window) {
+            sendResponse({ verdict: null });
+            return false;
+          }
+          void collectAndSend(true)
+            .then((verdict) => sendResponse({ verdict }))
+            .catch(() => sendResponse({ verdict: null }));
+          return true;
+        }
+        return false;
+      }
 
-    const scheduleScan = () => {
-      if (scanTimer) clearTimeout(scanTimer);
-      scanTimer = setTimeout(() => void scanAndReport(), 350);
-    };
+      if (window.top !== window) {
+        return;
+      }
 
-    void scanAndReport();
+      showRiskWarningOverlay(
+        message.observation as SiteObservation,
+        message.verdict as RiskVerdict,
+        message.requestId as string
+      );
+    });
 
-    if (document.documentElement) {
-      new MutationObserver(scheduleScan).observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ["type", "name", "id", "autocomplete"],
+    async function collectAndSend(force = false): Promise<RiskVerdict | null> {
+      const pageSignals = collectPageSignals();
+      const isTopFrame = window.top === window;
+      const serialized = JSON.stringify(pageSignals);
+
+      if (!force && serialized === previousSignals) {
+        return null;
+      }
+
+      previousSignals = serialized;
+
+      const permissions = isTopFrame
+        ? await collectPermissionSignals()
+        : null;
+
+      const response = await chrome.runtime.sendMessage({
+        type: "SITE_SIGNALS",
+        frameUrl: window.location.href,
+        isTopFrame,
+        pageSignals,
+        permissions,
       });
+      return response?.verdict ?? null;
     }
+
+    await collectAndSend();
+
+    let timer: ReturnType<typeof setTimeout>;
+
+    const observer = new MutationObserver(() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        void collectAndSend();
+      }, 500);
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+    });
+
+    window.addEventListener("online", () => {
+      void chrome.runtime.sendMessage({ type: "FLUSH_EMAIL_QUEUE" });
+    });
   },
 });
-
-async function collectObservation(): Promise<SiteObservation> {
-  const url = location.href;
-  const passwordFieldDetected = Boolean(document.querySelector('input[type="password"]'));
-  const usernameFieldDetected = Boolean(document.querySelector(
-    'input[autocomplete="username"], input[name*="user" i], input[id*="user" i], input[name*="login" i], input[id*="login" i]',
-  )) || (passwordFieldDetected && Boolean(document.querySelector('input[type="email"]')));
-
-  return {
-    url,
-    domain: location.hostname.replace(/^www\./i, ""),
-    timestamp: Date.now(),
-    protocol: location.protocol === "https:" ? "HTTPS" : "HTTP",
-    usernameFieldDetected,
-    passwordFieldDetected,
-    otpFieldDetected: Boolean(document.querySelector(
-      'input[autocomplete="one-time-code"], input[name*="otp" i], input[id*="otp" i], input[name*="verification" i], input[id*="verification" i]',
-    )),
-    paymentFieldDetected: Boolean(document.querySelector(
-      'input[autocomplete^="cc-"], input[name*="card" i], input[id*="card" i], input[name*="cvv" i], input[name*="cvc" i]',
-    )),
-    fileUploadDetected: Boolean(document.querySelector('input[type="file"]')),
-    cameraPermission: await isPermissionGranted("camera"),
-    microphonePermission: await isPermissionGranted("microphone"),
-    locationPermission: await isPermissionGranted("geolocation"),
-    notificationPermission: typeof Notification !== "undefined" && Notification.permission === "granted",
-  };
-}
-
-async function isPermissionGranted(name: string): Promise<boolean> {
-  try {
-    const permission = await navigator.permissions.query({ name: name as PermissionName });
-    return permission.state === "granted";
-  } catch {
-    return false;
-  }
-}

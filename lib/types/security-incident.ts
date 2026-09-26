@@ -1,32 +1,24 @@
-import type {
-  PotentialExposureType,
-  RiskSeverity,
-  ThreatCategory,
-} from "./risk-assessment";
+import type { SiteObservation } from "./site-observation";
+import type { ExposureType, RiskSeverity, RiskVerdict } from "./risk-verdict";
+
+export type UserDecision = "left" | "continued";
+
+export type IncidentStatus = "unresolved" | "resolved";
 
 export interface SecurityIncident {
   id: string;
-  url: string;
-  domain: string;
-  detectionTimestamp: number;
-  threatScore: number;
+  createdAt: number;
+  updatedAt: number;
+  status: IncidentStatus;
+  userDecision: UserDecision;
   severity: RiskSeverity;
-  threatCategory: ThreatCategory;
-  threatIntelligenceSources: string[];
+  score: number;
+  domain: string;
+  url: string;
   reasons: string[];
-  userContinued: true;
-  potentialExposureTypes: PotentialExposureType[];
-  status: "UNRESOLVED" | "RESOLVED";
-  resolutionTimestamp?: number;
-}
-
-export interface WarningDecision {
-  id: string;
-  url: string;
-  domain: string;
-  decisionTimestamp: number;
-  decision: "LEFT_SITE" | "CONTINUED";
-  warningFollowed: boolean;
-  threatScore: number;
-  severity: RiskSeverity;
+  exposures: ExposureType[];
+  recommendedActions: string[];
+  completedActions: string[];
+  observation: SiteObservation;
+  verdict: RiskVerdict;
 }

@@ -1,15 +1,19 @@
+import type {
+  PageSignals
+} from "../collectors/page-signals";
+
+import type {
+  PermissionSignals
+} from "../collectors/permissions";
+
 export interface SiteObservation {
   url: string;
   domain: string;
   timestamp: number;
-  protocol: "HTTP" | "HTTPS";
-  usernameFieldDetected: boolean;
-  passwordFieldDetected: boolean;
-  otpFieldDetected: boolean;
-  paymentFieldDetected: boolean;
-  fileUploadDetected: boolean;
-  cameraPermission: boolean;
-  microphonePermission: boolean;
-  locationPermission: boolean;
-  notificationPermission: boolean;
+
+  isHttps: boolean;
+
+  pageSignals: PageSignals;
+
+  permissions: PermissionSignals;
 }

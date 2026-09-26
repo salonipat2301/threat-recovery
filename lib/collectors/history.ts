@@ -4,6 +4,7 @@ import { browser as chrome } from "wxt/browser";
 export async function getRecentHistory(
   hoursBack = 24
 ): Promise<BrowserEvent[]> {
+
   const endTime = Date.now();
   const startTime =
     endTime - hoursBack * 60 * 60 * 1000;
@@ -22,24 +23,50 @@ export async function getRecentHistory(
         item.lastVisitTime
     )
     .map((item) => {
+
       const url = item.url!;
+      const parsedUrl = new URL(url);
 
       return {
         id: `history-${item.id}-${item.lastVisitTime}`,
+
         url,
-        domain: getDomain(url),
-        title: item.title || undefined,
-        timestamp: item.lastVisitTime!,
-        source: "history" as const,
+
+        domain:
+          parsedUrl.hostname.replace(/^www\./, ""),
+
+        title:
+          item.title || undefined,
+
+        timestamp:
+          item.lastVisitTime!,
+
+        isHttps:
+          parsedUrl.protocol === "https:",
+
+        category: classifyCategory(url),
+        riskScore: parsedUrl.protocol === "http:" ? 25 : 0,
+        riskLevel: "low" as const,
+
+        source:
+          "history" as const,
       };
     })
-    .sort((a, b) => b.timestamp - a.timestamp);
+    .sort(
+      (a, b) =>
+        b.timestamp - a.timestamp
+    );
 }
 
-function getDomain(url: string): string {
+export function classifyCategory(url: string): "anonymizer" | "other" {
   try {
-    return new URL(url).hostname.replace(/^www\./, "");
+    const parsed = new URL(url);
+    return /(?:^|[/.])(?:anonymizer|proxy)(?:[/.]|$)|testcat_an(?:\.html)?$/i.test(
+      `${parsed.hostname}${parsed.pathname}`
+    )
+      ? "anonymizer"
+      : "other";
   } catch {
-    return "unknown";
+    return "other";
   }
 }
