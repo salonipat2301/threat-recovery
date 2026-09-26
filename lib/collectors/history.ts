@@ -1,4 +1,5 @@
 import type { BrowserEvent } from "../types/browser-event";
+import { browser as chrome } from "wxt/browser";
 
 export async function getRecentHistory(
   hoursBack = 24

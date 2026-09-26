@@ -8,9 +8,12 @@ export default defineConfig({
     permissions: [
       "history",
       "webNavigation",
+      "storage",
     ],
     host_permissions: [
       "https://safebrowsing.googleapis.com/*",
+      "http://*/*",
+      "https://*/*",
     ],
   },
 });

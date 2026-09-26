@@ -121,7 +121,7 @@ function readVarint(
   let offset = start;
 
   while (offset < data.length && shift < 35) {
-    const byte = data[offset++];
+    const byte = data[offset++]!;
     value |= (byte & 0x7f) << shift;
 
     if ((byte & 0x80) === 0) {
