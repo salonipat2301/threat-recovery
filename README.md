@@ -63,6 +63,7 @@ npm run test:safe-browsing
 
 ## Presentation and architecture
 
+- [Demo video presentation script](docs/demo-video-script.md)
 - [Presentation document](https://docs.google.com/document/d/1C_tafPTFGeARg83yS-j7POeyXP-sFswdYF16a8uRQA4/edit?tab=t.0) (Google Doc; access is controlled by its owner)
 - [Architecture and workflow diagram](docs/architecture.mmd)
 - [Datasets, APIs, dependencies, and project disclosures](docs/disclosures.md)
