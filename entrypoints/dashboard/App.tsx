@@ -34,7 +34,9 @@ export default function App() {
       ]);
       setIncidents(incidentResponse?.incidents ?? []);
       setHistory(historyResponse?.events ?? []);
-      setEmailSettings(emailResponse?.settings ?? emailSettings);
+      if (emailResponse?.settings) {
+        setEmailSettings(emailResponse.settings);
+      }
       setQueuedEmailCount(emailResponse?.queuedCount ?? 0);
     } finally {
       setLoading(false);

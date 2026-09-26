@@ -46,7 +46,7 @@ export async function getRecentHistory(
 
         category: classifyCategory(url),
         riskScore: parsedUrl.protocol === "http:" ? 25 : 0,
-        riskLevel: "low" as const,
+        riskLevel: parsedUrl.protocol === "http:" ? ("low" as const) : ("none" as const),
 
         source:
           "history" as const,

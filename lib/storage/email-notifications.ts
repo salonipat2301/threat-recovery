@@ -97,7 +97,9 @@ export async function flushEmailNotificationQueue(): Promise<void> {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${settings.bearerToken}`,
+            ...(settings.bearerToken
+              ? { Authorization: `Bearer ${settings.bearerToken}` }
+              : {}),
           },
           body: JSON.stringify({
             to: settings.recipient,

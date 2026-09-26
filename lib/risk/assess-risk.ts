@@ -3,6 +3,7 @@ import type { ExposureType, RiskVerdict } from "../types/risk-verdict";
 import { lookupSafeBrowsing } from "../threat-intel/safe-browsing";
 import {
   evaluateHeuristics,
+  hasElevatedLocalRisk,
   scoreToSeverity,
   shouldWarnForSeverity,
 } from "./heuristics";
@@ -53,6 +54,8 @@ export async function assessRisk(
   }
 
   const severity = scoreToSeverity(score);
+  const mediumWithLocalElevators =
+    severity === "medium" && hasElevatedLocalRisk(reasons);
 
   return {
     url: observation.url,
@@ -60,7 +63,10 @@ export async function assessRisk(
     scoredAt: Date.now(),
     score,
     severity,
-    shouldWarn: shouldWarnForSeverity(severity) || safeBrowsing.matched,
+    shouldWarn:
+      shouldWarnForSeverity(severity) ||
+      mediumWithLocalElevators ||
+      safeBrowsing.matched,
     reasons,
     exposures: [...exposures],
     threatIntel: {

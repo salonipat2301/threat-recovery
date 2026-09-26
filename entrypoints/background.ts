@@ -151,12 +151,16 @@ export default defineBackground(() => {
     if (message?.type === "GET_HISTORY") {
       void Promise.all([listBrowsingHistory(), getRecentHistory(24 * 30)]).then(
         ([savedEvents, browserEvents]) => {
-          const merged = [...savedEvents];
-          for (const event of browserEvents) {
-            const saved = merged.find((item) => item.url === event.url);
-            if (!saved) merged.push(event);
+          const byUrl = new Map<string, (typeof savedEvents)[number]>();
+          for (const event of [...browserEvents, ...savedEvents]) {
+            const existing = byUrl.get(event.url);
+            if (!existing || event.timestamp >= existing.timestamp) {
+              byUrl.set(event.url, event);
+            }
           }
-          merged.sort((a, b) => b.timestamp - a.timestamp);
+          const merged = [...byUrl.values()].sort(
+            (a, b) => b.timestamp - a.timestamp
+          );
           sendResponse({ events: merged.slice(0, 500) });
         }
       );
@@ -181,7 +185,7 @@ async function handleSiteSignals(
   const url = sender.tab?.url;
 
   if (tabId === undefined || !url) {
-    return;
+    return null;
   }
 
   const previous = tabStates.get(tabId);
@@ -220,7 +224,7 @@ async function handleSiteSignals(
   });
 
   if (!permissions) {
-    return;
+    return null;
   }
 
   const observation = createSiteObservation(
@@ -230,7 +234,7 @@ async function handleSiteSignals(
   );
 
   if (!observation) {
-    return;
+    return null;
   }
 
   console.log("SITE_OBSERVATION", observation);
@@ -244,14 +248,14 @@ async function handleSiteSignals(
   console.log("RISK_VERDICT", verdict);
 
   if (!verdict.shouldWarn) {
-    return;
+    return verdict;
   }
 
   const warnKey = `${observation.domain}|${verdict.severity}|${verdict.score}`;
   const state = tabStates.get(tabId);
 
   if (!state || state.lastWarnedKey === warnKey || state.pendingWarning) {
-    return;
+    return verdict;
   }
 
   const requestId = crypto.randomUUID();
@@ -275,11 +279,16 @@ async function handleSiteSignals(
     });
   } catch (error) {
     console.warn("Failed to show warning overlay", error);
-    tabStates.set(tabId, {
-      ...tabStates.get(tabId)!,
-      pendingWarning: undefined,
-    });
+    const failedState = tabStates.get(tabId);
+    if (failedState) {
+      tabStates.set(tabId, {
+        ...failedState,
+        pendingWarning: undefined,
+      });
+    }
   }
+
+  return verdict;
 }
 
 async function handleWarningDecision(
@@ -406,7 +415,7 @@ function createBrowserEvent(
       isHttps: parsedUrl.protocol === "https:",
       category: classifyCategory(url),
       riskScore: parsedUrl.protocol === "http:" ? 25 : 0,
-      riskLevel: "low",
+      riskLevel: parsedUrl.protocol === "http:" ? "low" : "none",
       source: "live_navigation",
     };
   } catch {

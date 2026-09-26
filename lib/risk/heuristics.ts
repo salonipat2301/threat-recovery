@@ -167,9 +167,22 @@ export function scoreToSeverity(score: number): import("../types/risk-verdict").
 export function shouldWarnForSeverity(
   severity: import("../types/risk-verdict").RiskSeverity
 ): boolean {
-  return (
-    severity === "medium" ||
-    severity === "high" ||
-    severity === "critical"
+  // High/critical only from local heuristics. Medium covers many legitimate
+  // HTTPS login pages (password + username). Safe Browsing matches still force
+  // a warning in assessRisk regardless of this threshold.
+  return severity === "high" || severity === "critical";
+}
+
+export function hasElevatedLocalRisk(
+  reasons: RiskReason[]
+): boolean {
+  return reasons.some((reason) =>
+    [
+      "insecure_transport",
+      "sensitive_over_http",
+      "suspicious_url_pattern",
+      "deep_subdomain",
+      "elevated_permissions",
+    ].includes(reason.code)
   );
 }

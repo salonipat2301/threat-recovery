@@ -1,5 +1,6 @@
-import type { RiskVerdict } from "../types/risk-verdict";
-import type { SiteObservation } from "../types/site-observation";
+import type { RiskVerdict } from "./risk-verdict";
+import type { SiteObservation } from "./site-observation";
+import type { EmailNotificationSettings } from "./email-notification";
 
 export type ExtensionMessage =
   | {
@@ -21,7 +22,27 @@ export type ExtensionMessage =
       decision: "left" | "continued";
     }
   | {
+      type: "REASSESS_CURRENT_PAGE";
+    }
+  | {
+      type: "GET_TAB_RISK";
+      tabId: number;
+    }
+  | {
       type: "GET_INCIDENTS";
+    }
+  | {
+      type: "GET_HISTORY";
+    }
+  | {
+      type: "GET_EMAIL_SETTINGS";
+    }
+  | {
+      type: "SAVE_EMAIL_SETTINGS";
+      settings: EmailNotificationSettings;
+    }
+  | {
+      type: "FLUSH_EMAIL_QUEUE";
     }
   | {
       type: "UPDATE_INCIDENT";

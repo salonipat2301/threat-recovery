@@ -8,6 +8,12 @@ const THREAT_TYPES = [
   "POTENTIALLY_HARMFUL_APPLICATION",
 ] as const;
 
+const CACHE_TTL_MS = 10 * 60 * 1000;
+const cache = new Map<
+  string,
+  { expiresAt: number; result: SafeBrowsingResult }
+>();
+
 export interface SafeBrowsingResult {
   matched: boolean;
   threatTypes: string[];
@@ -39,6 +45,11 @@ export async function lookupSafeBrowsing(
       available: false,
       error: "Safe Browsing API key not configured",
     };
+  }
+
+  const cached = cache.get(url);
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.result;
   }
 
   try {
@@ -83,11 +94,18 @@ export async function lookupSafeBrowsing(
       ),
     ];
 
-    return {
+    const result: SafeBrowsingResult = {
       matched: threatTypes.length > 0,
       threatTypes,
       available: true,
     };
+
+    cache.set(url, {
+      expiresAt: Date.now() + CACHE_TTL_MS,
+      result,
+    });
+
+    return result;
   } catch (error) {
     return {
       matched: false,
