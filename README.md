@@ -12,6 +12,10 @@ Threat Recovery is a privacy-minded Chrome extension for the recovery step after
 
 The extension cannot observe a user's decision to bypass Chrome's own Safe Browsing interstitial. An incident is created when the user continues through Threat Recovery's warning.
 
+## In development
+
+Threat Recovery does not currently scan downloaded files. Download scanning and malware detection are in development. Planned validation includes the official [EICAR anti-malware test file](https://www.eicar.org/download-anti-malware-testfile/): EICAR.COM is a harmless DOS test program designed to trigger antivirus detection, not real malware.
+
 ## Requirements
 
 - Node.js 22 (the project was developed with Node.js v22.23.3)
