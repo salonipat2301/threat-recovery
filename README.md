@@ -52,18 +52,6 @@ npm run build
 
 The production bundle is `.output/chrome-mv3`. Load that directory using **Load unpacked** on `chrome://extensions`. Build output is ignored by Git and should not be committed.
 
-## Demo
-
-In one terminal, start the safe local demonstration page:
-
-```bash
-npm run demo
-```
-
-With the extension loaded, open <http://127.0.0.1:4173>. The page contains an inert sample form that exposes field *types* for the scanner; it does not submit or save entered values. Review the extension's warning and choose **Continue anyway** to create an incident. Open the extension popup and choose **View dashboard** to review its reason, inferred exposure, and recommended steps.
-
-To demonstrate risk lookup against a known test URL, Safe Browsing must be configured with a valid API key. The local demo uses heuristic signals and is not a claim that every test URL will match Google's current threat lists.
-
 ## Verify locally
 
 ```bash
