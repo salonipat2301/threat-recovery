@@ -70,7 +70,3 @@ npm run test:safe-browsing
 ## Privacy and data handling
 
 Page field values are not collected. Browser history, observations, incidents, and the optional email queue are stored locally in the extension. If configured, the Safe Browsing request sends the current page URL to Google for threat lookup. If the user enables email alerts and configures a relay, a limited evidence report (domain, time, severity, reasons, signal types, decision, inferred exposure, and actions) is sent to that endpoint. The full page URL and form values are excluded from the email report. See [disclosures](docs/disclosures.md) before using external services.
-
-## Public repository and history
-
-The final source and commit history are maintained in the public Git repository at <https://github.com/salonipat2301/threat-recovery>. The project is an extension source repository, not an npm package; `private: true` in `package.json` prevents npm publishing and does not set GitHub repository visibility.
