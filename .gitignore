@@ -27,10 +27,5 @@ web-ext.config.ts
 *.sln
 *.sw?
 
-# Local secrets / env
-.env
-.env.*
-!.env.example
-
 # Local previews
 popup-preview*.png

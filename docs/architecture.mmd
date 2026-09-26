@@ -1,0 +1,21 @@
+flowchart TD
+  A[Browser navigation] --> B[Content script]
+  B --> C[Collect signal types and permission states]
+  C --> D[Background service worker]
+  D --> E{Safe Browsing key configured?}
+  E -- Yes --> F[Google Safe Browsing URL lookup]
+  E -- No --> G[Local heuristics only]
+  F --> H[Risk verdict]
+  G --> H
+  H --> I{High risk?}
+  I -- No --> J[Save visit locally]
+  I -- Yes --> K[In-page warning]
+  K --> L{User decision}
+  L -- Leave --> M[No incident]
+  L -- Continue --> N[Save unresolved incident locally]
+  N --> O[Popup and local dashboard]
+  N --> P{Email alerts enabled and relay configured?}
+  P -- No --> O
+  P -- Yes --> Q[Local retry queue]
+  Q --> R[HTTPS email relay when online]
+  R --> S[Email delivery handled by configured relay]
