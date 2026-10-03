@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Threat Recovery — 7-minute presentation + Q&amp;A</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #e7edf3; color: #edf4fa; font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  .page { width: 13.333in; height: 7.5in; padding: .42in .58in .32in; position: relative; overflow: hidden; page-break-after: always; background: #0b1420; display: flex; flex-direction: column; }
+  .page:last-child { page-break-after: auto; }
+  .top { display:flex; justify-content:space-between; align-items:center; color:#91a5b9; font-size:10px; letter-spacing:.16em; text-transform:uppercase; }
+  .brand { display:flex; gap:9px; align-items:center; color:#dce8f1; font-weight:700; }
+  .mark { width:19px; height:19px; border:1px solid #54d6bf; border-radius:6px; display:grid; place-items:center; color:#54d6bf; font-size:11px; letter-spacing:0; }
+  .content { flex:1; display:flex; flex-direction:column; justify-content:center; padding: .08in 0 .16in; }
+  .eyebrow { color:#54d6bf; font-weight:700; font-size:11px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:12px; }
+  h1 { font-size:39px; letter-spacing:-.04em; line-height:1.05; margin:0 0 13px; max-width:900px; }
+  h2 { font-size:30px; letter-spacing:-.035em; margin:0 0 10px; line-height:1.1; }
+  .sub { font-size:17px; color:#a8bacb; line-height:1.45; max-width:850px; margin:0; }
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:13px; margin-top:25px; }
+  .grid.two { grid-template-columns:repeat(2,1fr); }
+  .card { background:#111f2e; border:1px solid #26384b; border-radius:13px; padding:15px 17px; min-height:105px; }
+  .card .k { color:#54d6bf; font-size:10px; text-transform:uppercase; letter-spacing:.13em; font-weight:700; margin-bottom:8px; }
+  .card strong { display:block; font-size:17px; line-height:1.25; margin-bottom:5px; }
+  .card p { margin:0; color:#a8bacb; font-size:12px; line-height:1.45; }
+  .flow { display:flex; align-items:stretch; gap:8px; margin-top:22px; }
+  .step { background:#122235; border:1px solid #304960; border-radius:10px; padding:12px 10px; flex:1; text-align:center; font-size:12px; line-height:1.35; color:#dbe7f0; }
+  .step b { display:block; color:#54d6bf; font-size:10px; letter-spacing:.1em; margin-bottom:5px; text-transform:uppercase; }
+  .arrow { color:#54d6bf; align-self:center; font-size:18px; }
+  .callout { border-left:3px solid #54d6bf; padding:11px 15px; background:#102131; color:#dbe7f0; border-radius:0 9px 9px 0; margin-top:17px; font-size:13px; line-height:1.45; }
+  .demo-window { border:1px solid #31485e; border-radius:13px; background:#101c2a; padding:16px 18px; margin-top:19px; }
+  .browserbar { color:#8196aa; font-size:10px; border-bottom:1px solid #293d52; padding-bottom:10px; margin-bottom:13px; }
+  .warning { display:flex; gap:15px; align-items:flex-start; }
+  .shield { min-width:37px; height:37px; border-radius:11px; display:grid; place-items:center; background:#482a21; color:#ffbb83; font-size:19px; }
+  .warning h3 { font-size:18px; margin:0 0 5px; }
+  .warning p { color:#a8bacb; font-size:12px; line-height:1.4; margin:0; }
+  .buttons { display:flex; gap:8px; margin-top:12px; }
+  .btn { border:1px solid #506477; border-radius:7px; padding:7px 11px; font-size:10px; color:#eaf2f8; }
+  .btn.primary { background:#9e4c2c; border-color:#b85b36; }
+  .notes { border-top:1px solid #26384b; padding-top:11px; display:grid; grid-template-columns:115px 1fr; gap:15px; min-height:1.38in; }
+  .notes .label { color:#54d6bf; font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; }
+  .notes p { margin:0; color:#afbfce; font-size:11px; line-height:1.5; }
+  .footer { display:flex; justify-content:space-between; align-items:center; position:absolute; bottom:12px; left:.58in; right:.58in; color:#667d91; font-size:9px; }
+  .pill { color:#ffca91; border:1px solid #735338; background:#30251c; padding:5px 9px; border-radius:99px; font-size:10px; white-space:nowrap; }
+  .big-number { color:#54d6bf; font-size:40px; font-weight:750; letter-spacing:-.05em; }
+  .small { font-size:11px; line-height:1.45; color:#a8bacb; }
+  .qa-list { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:20px; }
+  .qa { border:1px solid #293c50; background:#111f2e; border-radius:11px; padding:12px 14px; }
+  .qa b { color:#e6f0f7; font-size:12px; display:block; margin-bottom:5px; }
+  .qa p { color:#a8bacb; font-size:10px; line-height:1.45; margin:0; }
+  .timing { font-variant-numeric:tabular-nums; }
+  @media print { html,body { background:#0b1420; -webkit-print-color-adjust:exact; print-color-adjust:exact; } }
+</style>
+</head>
+<body>
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span>Cyber Defense · Project presentation</span></div>
+  <div class="content">
+    <div class="eyebrow">A recovery step after a risky choice</div>
+    <h1>When someone continues,<br>the security story shouldn’t disappear.</h1>
+    <p class="sub">A browser extension that assesses risky pages, explains why they may be dangerous, and keeps a local incident record if the user continues past its warning.</p>
+    <div class="grid">
+      <div class="card"><div class="k">Track / category</div><strong>Cybersecurity · Cyber Defense</strong><p>Browser protection and post-warning recovery.</p></div>
+      <div class="card"><div class="k">Problem</div><strong>A warning is easy to lose</strong><p>After continuing, people may lose the risk context and next steps.</p></div>
+      <div class="card"><div class="k">Product</div><strong>Assess → warn → recover</strong><p>Turn a one-time interruption into an actionable local record.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="label">Speaker · 0:00–0:45</div><p>“Our track is Cyber Defense. The problem we worked on is what happens after a person sees a risky-site warning and continues anyway. The original warning can disappear, leaving them unsure what was detected or what to do next. Threat Recovery adds an assessment and a recovery record: it can explain the risk before continuing, then preserve the context and suggested actions if the user proceeds through our warning.”</p></div>
+  <div class="footer"><span>7-minute presentation + 3-minute Q&amp;A</span><span class="timing">01 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">THE USER NEED</span></div>
+  <div class="content">
+    <div class="eyebrow">The gap</div><h2>Detection is only the first moment.</h2>
+    <p class="sub">A user who continues may still need to understand what was exposed and what action to take.</p>
+    <div class="grid two">
+      <div class="card"><div class="k">Before</div><strong>“This page may be risky.”</strong><p>A warning interrupts, but may not tell the user how to recover later.</p></div>
+      <div class="card"><div class="k">After</div><strong>“What happened, and what now?”</strong><p>The decision and its context can vanish when the tab changes or the warning closes.</p></div>
+    </div>
+    <div class="callout">Design goal: preserve useful evidence and follow-up steps locally, while never collecting what a person types into a page.</div>
+  </div>
+  <div class="notes"><div class="label">Speaker · 0:45–1:25</div><p>“We focused on the gap after detection. A user may continue because they need the site or don’t understand the warning. Once they do, they can lose the reason for the warning and any chance to review it. Our goal is not to claim we can prevent every unsafe action. It is to make the risk understandable and keep a useful follow-up record when someone chooses to continue through Threat Recovery’s warning.”</p></div>
+  <div class="footer"><span>Track: Cyber Defense · Focus: post-warning recovery</span><span class="timing">02 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">THE APPROACH</span></div>
+  <div class="content">
+    <div class="eyebrow">One connected flow</div><h2>Signals become a choice, then a recovery plan.</h2>
+    <div class="flow">
+      <div class="step"><b>01 · Observe</b>URL, field types,<br>permission states</div><span class="arrow">›</span>
+      <div class="step"><b>02 · Assess</b>Local heuristics<br>+ optional Safe Browsing</div><span class="arrow">›</span>
+      <div class="step"><b>03 · Warn</b>Explain reasons<br>and offer a choice</div><span class="arrow">›</span>
+      <div class="step"><b>04 · Record</b>Continue → local<br>unresolved incident</div><span class="arrow">›</span>
+      <div class="step"><b>05 · Recover</b>Review exposure<br>and suggested actions</div>
+    </div>
+    <div class="grid two">
+      <div class="card"><div class="k">Page signals</div><strong>Types, not values</strong><p>Detects password, username, OTP, payment, and file-upload fields; never reads their contents.</p></div>
+      <div class="card"><div class="k">Threat intelligence</div><strong>Optional URL lookup</strong><p>Google Safe Browsing can add known-threat matches when configured; local heuristics work without it.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="label">Speaker · 1:25–2:25</div><p>“The extension collects page signal types, not field values. It combines local heuristics with an optional Google Safe Browsing URL lookup. When the assessment should warn, the extension shows an in-page warning where content-script access is available, and uses an extension-owned warning page when it is not. Leaving ends the flow without an incident. Continuing through our warning saves a local incident, which the dashboard turns into a review and action checklist.”</p></div>
+  <div class="footer"><span>Field values are not collected · Safe Browsing is optional</span><span class="timing">03 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">IMPLEMENTATION EVIDENCE</span></div>
+  <div class="content">
+    <div class="eyebrow">Current source behavior</div><h2>Storage and heuristics are present in the current commit.</h2>
+    <div class="grid">
+      <div class="card"><div class="big-number">45</div><strong>Threat-term host signal</strong><p>Hosts containing terms like malware or phishing receive a local heuristic signal.</p></div>
+      <div class="card"><div class="big-number">+70</div><strong>Safe Browsing match</strong><p>A configured match adds weight and forces a warning, regardless of local threshold.</p></div>
+      <div class="card"><div class="big-number">500</div><strong>Saved history cap</strong><p>History is persisted locally; dashboard presents the 10 most recent entries.</p></div>
+    </div>
+    <div class="callout"><b>Incident persistence:</b> `chrome.storage.local` stores incidents and pending warning state. Incident writes are serialized to avoid concurrent updates replacing one another.</div>
+    <p class="small" style="margin-top:12px">Example: HTTPS malware.wicar.org → 45 points / Medium from the host keyword; local elevated-risk rule makes it warning-eligible. A Safe Browsing match adds 70 more. HTTP adds its own transport weight.</p>
+  </div>
+  <div class="notes"><div class="label">Speaker · 2:25–3:20</div><p>“Here’s what the current source does. Local rules add 45 points when the hostname contains a threat term such as malware, and the medium elevated-risk rule makes that signal warning-eligible. If Safe Browsing independently matches, it adds 70 points and forces a warning. For the exact HTTPS WICAR hostname, local keyword scoring alone is 45—medium—not 25. The incident store and pending warning use Chrome local extension storage, and incident writes are serialized. This is implementation evidence; a live browser run is still needed to confirm the installed bundle is current.”</p></div>
+  <div class="footer"><span>Source checked: main · current local source, not a live runtime test</span><span class="timing">04 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">LIVE PRODUCT DEMO · PART 1</span></div>
+  <div class="content">
+    <div class="eyebrow">Use a safe, repeatable page</div><h2>Show the warning and the choice.</h2>
+    <p class="sub">The bundled local demo page has inert username and password fields. It does not submit or save entries.</p>
+    <div class="demo-window">
+      <div class="browserbar">LOCAL DEMO · 127.0.0.1:4173 · safe test form, no submission</div>
+      <div class="warning"><div class="shield">!</div><div><h3>Pause before continuing</h3><p>Risk indicators found on this page. Review the reason before you proceed.</p><div class="buttons"><span class="btn">Leave this site</span><span class="btn primary">Continue anyway</span></div></div></div>
+    </div>
+    <div class="grid two">
+      <div class="card"><div class="k">Demo setup</div><strong>Start extension + local demo</strong><p>Keep the unpacked development extension loaded; run `npm run demo`; open the local demo URL.</p></div>
+      <div class="card"><div class="k">Narrate</div><strong>Point out the choice</strong><p>Explain the detected signal types and that no typed values are captured.</p></div>
+    </div>
+  </div>
+  <div class="notes"><div class="label">Speaker · 3:20–4:35</div><p>“I’m using the local demo page rather than a live malware sample. It is bundled with the project and the form is inert: it will not send or store anything. The extension sees a username and password field and warns because the page is plain HTTP and contains sensitive form types. Notice the options: leave, or continue anyway. I’ll choose continue to demonstrate what our product does after that decision.” <b>Action:</b> click “Continue anyway.”</p></div>
+  <div class="footer"><span>Use synthetic demo data only · do not enter real credentials</span><span class="timing">05 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">LIVE PRODUCT DEMO · PART 2</span></div>
+  <div class="content">
+    <div class="eyebrow">Make the recovery tangible</div><h2>Continue creates a record you can act on.</h2>
+    <div class="flow">
+      <div class="step"><b>Decision</b>User chose<br>Continue anyway</div><span class="arrow">›</span>
+      <div class="step"><b>Incident</b>Unresolved +<br>risk evidence</div><span class="arrow">›</span>
+      <div class="step"><b>Dashboard</b>Domain, time,<br>reasons, exposure</div><span class="arrow">›</span>
+      <div class="step"><b>Next steps</b>Checklist +<br>mark resolved</div>
+    </div>
+    <div class="grid two">
+      <div class="card"><div class="k">On screen</div><strong>Open dashboard → Unresolved</strong><p>Show the new incident, reason, potential exposure, recommended actions, and resolved control.</p></div>
+      <div class="card"><div class="k">Persistence</div><strong>Local to this browser profile</strong><p>Incidents are stored with Chrome extension local storage and remain available after the warning closes.</p></div>
+    </div>
+    <div class="callout">If the incident does not appear, stop and show the service-worker console rather than claiming success. The decision handler logs `SECURITY_INCIDENT` after a successful save.</div>
+  </div>
+  <div class="notes"><div class="label">Speaker · 4:35–5:50</div><p>“Now I’ll open the dashboard. The incident is unresolved and includes the domain, time, severity, reasons, potential exposures, and suggested actions. I can review the checklist and mark the incident resolved. This record is stored in this browser profile through Chrome local extension storage. The incident is created specifically when the user continues through Threat Recovery’s own warning; it does not detect someone bypassing Chrome’s separate Safe Browsing interstitial. If the incident fails to appear in a live run, I’ll show the background console log and call that out as a demo issue rather than imply it worked.”</p></div>
+  <div class="footer"><span>Incident creation is tied to the Threat Recovery “Continue anyway” decision</span><span class="timing">06 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">LIMITS + TAKEAWAY</span></div>
+  <div class="content">
+    <div class="eyebrow">A practical, privacy-minded boundary</div><h2>Support recovery without claiming certainty.</h2>
+    <div class="grid">
+      <div class="card"><div class="k">Local by default</div><strong>History + incidents stay in extension storage</strong><p>Optional email requires the user to configure a separate relay; it is off by default.</p></div>
+      <div class="card"><div class="k">Clear data boundary</div><strong>No form values</strong><p>Page field types are signals. Optional Safe Browsing sends the page URL to Google.</p></div>
+      <div class="card"><div class="k">Known limits</div><strong>Not a file scanner</strong><p>Heuristics are indicators, not proof. The extension cannot observe Chrome interstitial bypasses.</p></div>
+    </div>
+    <div class="callout"><span class="big-number" style="font-size:24px">Assess → Warn → Record → Recover</span><br>Keep the risk context available after the user’s choice.</div>
+  </div>
+  <div class="notes"><div class="label">Speaker · 5:50–7:00</div><p>“Threat Recovery is a support layer, not a guarantee that every threat will be detected. Local field-type heuristics can be wrong; Safe Browsing is optional and receives the URL when enabled. We do not scan downloaded files or observe bypasses of Chrome’s own interstitial. History and incidents stay in local extension storage by default. Optional high-risk email needs a user-configured HTTPS relay and is off by default. Our outcome is simple: assess, warn, record the choice, and give the user something useful to do afterward. Thank you.”</p></div>
+  <div class="footer"><span>End of 7-minute presentation · transition to Q&amp;A</span><span class="timing">07 / 08</span></div>
+</section>
+
+<section class="page">
+  <div class="top"><div class="brand"><span class="mark">T</span> Threat Recovery</div><span class="pill">Q&amp;A · 3 MINUTES</span></div>
+  <div class="content">
+    <div class="eyebrow">Likely questions · concise, accurate answers</div><h2>Be clear about what is implemented.</h2>
+    <div class="qa-list">
+      <div class="qa"><b>Is storage persistent?</b><p>Yes in the current source: incidents and pending warning data use `chrome.storage.local`. Incident writes are serialized. Runtime behavior should still be confirmed in the installed extension.</p></div>
+      <div class="qa"><b>Why did WICAR show low · 25 before?</b><p>That reading does not match the current heuristic source. Current HTTPS malware.wicar.org adds a 45-point threat-keyword signal. The old reading may have come from a stale bundle or earlier code; the screenshot alone cannot identify which.</p></div>
+      <div class="qa"><b>Does every warning create an incident?</b><p>No. The incident is saved only when the user chooses “Continue anyway” in Threat Recovery’s warning. Choosing Leave does not create one.</p></div>
+      <div class="qa"><b>Does a Safe Browsing match always warn?</b><p>Yes, in current assessment logic. A match adds 70 points and sets `shouldWarn`, even when local heuristics alone would not reach the threshold.</p></div>
+      <div class="qa"><b>Are form contents collected?</b><p>No. The extension detects field types and permission states, not entered values. Safe Browsing URL lookup sends the URL to Google when configured.</p></div>
+      <div class="qa"><b>What is not covered?</b><p>Downloaded-file scanning, Chrome interstitial bypass detection, and an included email relay. The optional email path needs the user’s own relay.</p></div>
+    </div>
+    <div class="callout"><b>Presenter check before the event:</b> reload the unpacked extension, run the local demo, and confirm the warning, “Continue anyway,” and dashboard incident in the same browser profile.</div>
+  </div>
+  <div class="notes"><div class="label">Q&amp;A · 7:00–10:00</div><p>Use the answers above as guardrails. If asked whether the live demo was tested, distinguish source inspection from a fresh browser run. Do not describe the hostname heuristic as proof that a site is malicious; it is a risk indicator. If the demo has a problem, use the local warning flow and describe the failed step accurately.</p></div>
+  <div class="footer"><span>Current source snapshot · commit 0b5479d</span><span class="timing">08 / 08</span></div>
+</section>
+</body>
+</html>

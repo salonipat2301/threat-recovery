@@ -6,15 +6,53 @@ Threat Recovery is a privacy-minded Chrome extension for the recovery step after
 
 - Checks visited pages for known threats through Google Safe Browsing when an API key is configured, and applies local risk heuristics.
 - Detects signal types such as username, password, one-time-code, payment, and file-upload fields, plus browser permission states. It does not read or store field values.
-- Shows an in-page warning for pages assessed as high risk. Continuing past this extension's warning creates a persistent local incident with the domain, timestamp, reason, inferred exposure, and recommended actions.
+- Shows a warning for high/critical assessments, medium assessments with an elevated local signal, or any Google Safe Browsing match. Continuing past this extension's warning creates a persistent local incident with the domain, timestamp, reason, inferred exposure, and recommended actions.
 - Keeps browsing history and incidents in extension local storage, and presents a compact popup and a separate dashboard.
 - Can optionally queue high or critical incident evidence while offline and post it to a user-configured HTTPS email relay when online. Email is off by default. This repository does not include or operate a mail relay; AWS SNS is not integrated.
 
 The extension cannot observe a user's decision to bypass Chrome's own Safe Browsing interstitial. An incident is created when the user continues through Threat Recovery's warning.
 
+## Current risk scoring
+
+The assessment adds the weights below. Local heuristic scores and Google Safe Browsing scores are combined; the total is not capped, though the displayed severity is capped at `critical`.
+
+| Signal | Weight | When it applies |
+| --- | ---: | --- |
+| HTTP instead of HTTPS | +25 | Every HTTP page. |
+| Password field | +30 | A password input is present. |
+| Username or email field | +12 | A username/email login input is present. |
+| One-time-code (OTP) field | +20 | A one-time-code or verification input is present. |
+| Payment-card field | +35 | A payment-card input is present. |
+| File-upload field | +18 | A file input is present. This detects the control, not file contents. |
+| Sensitive form over HTTP | +40 | Extra weight when an HTTP page has a password, payment-card, or OTP field. |
+| Granted browser permissions | +18 per permission | Applies to each granted camera, microphone, geolocation, or notification permission; total permission weight is `10 + 8 × number granted`. |
+| Threat term in hostname | +45 | Hostname label contains `malware`, `phishing`, `ransomware`, `trojan`, `botnet`, `exploit`, or `virus`. |
+| Suspicious hostname with sensitive form | +22 | A sensitive form is present and the hostname matches an IP-address, punycode (`xn--`), or login/security-related pattern. |
+| Deep subdomain | +10 | Hostname has four or more labels, such as `a.b.example.com`. |
+| Google Safe Browsing match | +70 | Added when the configured lookup reports one or more supported threat types. A match also triggers a warning directly. |
+
+### Severity thresholds
+
+| Total score | Severity |
+| ---: | --- |
+| 0–14 | None |
+| 15–39 | Low |
+| 40–64 | Medium |
+| 65–89 | High |
+| 90 or more | Critical |
+
+### Warning rule
+
+- High and critical assessments trigger a warning.
+- A medium assessment also triggers a warning if it contains an elevated local signal: insecure transport, sensitive fields over HTTP, suspicious hostname with a sensitive form, a threat-term hostname, a deep subdomain, or granted browser permissions.
+- A Google Safe Browsing match triggers a warning regardless of the score.
+- Low and none assessments do not trigger a warning by these rules.
+
+These are rule weights, not probabilities or a claim that a site is malicious. For example, `https://malware.wicar.org` receives 45 points from the current hostname heuristic alone (medium and warning-eligible). A Safe Browsing match would add 70 more points. Actual results can differ if the URL, signals, permissions, configured threat lookup, or installed extension build differs.
+
 ## In development
 
-Threat Recovery does not currently scan downloaded files. Download scanning and malware detection are in development. Planned validation includes the official [EICAR anti-malware test file](https://www.eicar.org/download-anti-malware-testfile/): EICAR.COM is a harmless DOS test program designed to trigger antivirus detection, not real malware.
+Threat Recovery does not currently scan downloaded files. The hostname heuristic above is a URL risk signal, not malware/file detection. Planned validation includes the official [EICAR anti-malware test file](https://www.eicar.org/download-anti-malware-testfile/): EICAR.COM is a harmless DOS test program designed to trigger antivirus detection, not real malware.
 
 ## Requirements
 

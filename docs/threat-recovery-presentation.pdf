@@ -1,0 +1,1637 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R 18 0 R 20 0 R] /Count 8 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 2941 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(PRESENTATION OPENING) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(01 / 08   0:00-0:45) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 448 Tm
+(CYBER DEFENSE  /  PROJECT PRESENTATION) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 32 Tf
+1 0 0 1 48 397 Tm
+(When someone continues,) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 29 Tf
+1 0 0 1 48 357 Tm
+(the security story should not disappear.) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 14 Tf
+1 0 0 1 50 325 Tm
+(Threat Recovery assesses risky pages, warns before exposure, and keeps a local incident record if a user) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 14 Tf
+1 0 0 1 50 306 Tm
+(continues through its warning.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 174 270 104 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 255 Tm
+(TRACK / CATEGORY) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 64 230 Tm
+(Cybersecurity - Cyber Defense) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 210 Tm
+(Browser protection and post-warning recovery.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+345 174 270 104 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 361 255 Tm
+(PROBLEM) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 361 230 Tm
+(Warnings disappear) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 361 210 Tm
+(After continuing, people can lose the risk) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 361 197 Tm
+(context and the next steps.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+642 174 270 104 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 658 255 Tm
+(SOLUTION) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 658 230 Tm
+(Assess -> warn -> recover) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 658 210 Tm
+(Turn a one-time interruption into an) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 658 197 Tm
+(actionable local record.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  0:00-0:45) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(Our track is Cyber Defense. We worked on what happens after someone sees a risky-site warning and continues anyway. The warning can disappear, leaving the person unsure what was) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(detected or what to do next. Threat Recovery adds an assessment and a recovery record: it explains the risk before continuing, then preserves context and suggested actions if the) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(user proceeds through our warning.) Tj
+ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 2447 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(THE USER PROBLEM) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(02 / 08   0:45-1:25) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(THE GAP) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Detection is only the first moment.) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 12 Tf
+1 0 0 1 50 397 Tm
+(A person who continues may still need to understand what was exposed and what to do next.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 225 400 112 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 314 Tm
+(BEFORE) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 64 289 Tm
+(This page may be risky.) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 269 Tm
+(A warning interrupts, but may not explain how to recover later.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+512 225 400 112 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 528 314 Tm
+(AFTER) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 528 289 Tm
+(What happened, and what now?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 528 269 Tm
+(The decision and its context can vanish when the warning closes.) Tj
+ET
+q
+0.055 0.150 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 169 864 36 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 10 Tf
+1 0 0 1 62 183 Tm
+(DESIGN GOAL  Preserve useful evidence locally; never collect what the person types.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  0:45-1:25) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(We focused on the gap after detection. A person may continue because they need the site or do not understand the warning. Once they do, they can lose the reason for the warning) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(and any chance to review it. We are not claiming to prevent every unsafe action. We want to make risk understandable and keep a useful follow-up record when someone chooses to) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(continue through our warning.) Tj
+ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Length 3756 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(APPROACH AND SOLUTION) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(03 / 08   1:25-2:25) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(ONE CONNECTED FLOW) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Signals become a choice, then a recovery plan.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 278 160 76 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 58 334 Tm
+(01 OBSERVE) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 58 313 Tm
+(URL, field types, permission) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 58 301 Tm
+(states) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+224 278 160 76 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 234 334 Tm
+(02 ASSESS) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 234 313 Tm
+(Local heuristics + optional) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 234 301 Tm
+(Safe Browsing) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+400 278 160 76 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 410 334 Tm
+(03 WARN) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 410 313 Tm
+(Explain reasons; offer a) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 410 301 Tm
+(choice) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+576 278 160 76 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 586 334 Tm
+(04 RECORD) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 586 313 Tm
+(Continue -> local unresolved) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 586 301 Tm
+(incident) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+752 278 160 76 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 762 334 Tm
+(05 RECOVER) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 762 313 Tm
+(Review exposure and suggested) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F1 9 Tf
+1 0 0 1 762 301 Tm
+(actions) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 166 410 84 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 227 Tm
+(PRIVACY) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 64 202 Tm
+(Signal types, not values) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 182 Tm
+(Detects password, username, OTP, payment and file-upload fields; does) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 169 Tm
+(not read their contents.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+502 166 410 84 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 518 227 Tm
+(THREAT INTELLIGENCE) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 518 202 Tm
+(Optional URL lookup) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 518 182 Tm
+(Google Safe Browsing can add known-threat matches when configured.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  1:25-2:25) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(The extension collects page signal types, not field values. It combines local heuristics with an optional Google Safe Browsing lookup. When the assessment should warn, it uses an) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(in-page warning when content-script access is available, and an extension-owned warning page when it is not. Leaving ends the flow without an incident. Continuing through our) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(warning saves a local incident, which the dashboard turns into a review and action checklist.) Tj
+ET
+endstream
+endobj
+10 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 9 0 R >>
+endobj
+11 0 obj
+<< /Length 3155 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(WHAT THE CODE DOES) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(04 / 08   2:25-3:20) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(CURRENT SOURCE BEHAVIOR) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Storage and heuristics are present in the current commit.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 233 270 105 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 315 Tm
+(LOCAL HEURISTIC) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 64 290 Tm
+(+45 threat-term host) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 270 Tm
+(A hostname containing terms such as malware) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 257 Tm
+(or phishing receives a risk signal.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+345 233 270 105 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 361 315 Tm
+(THREAT LOOKUP) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 361 290 Tm
+(+70 Safe Browsing match) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 361 270 Tm
+(A configured match adds weight and triggers a) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 361 257 Tm
+(warning.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+642 233 270 105 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 658 315 Tm
+(PERSISTENT STORAGE) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 658 290 Tm
+(Chrome local storage) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 658 270 Tm
+(Incidents and pending warning state are) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 658 257 Tm
+(stored; incident writes are serialized.) Tj
+ET
+q
+0.110 0.100 0.080 rg
+0.400 0.300 0.190 RG 1 w
+48 170 864 42 re B
+Q
+BT
+1.000 0.720 0.480 rg
+/F2 10 Tf
+1 0 0 1 62 193 Tm
+(EXAMPLE  HTTPS malware.wicar.org -> 45 / medium from keyword heuristic; warning-eligible.) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 62 178 Tm
+(A Safe Browsing match adds 70 more. HTTP also adds transport risk.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  2:25-3:20) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(Here is what current source says. Local rules add 45 points when a hostname contains a term like malware. On HTTPS malware.wicar.org, that local signal alone is 45, or medium, and) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(the elevated-risk rule makes it warning-eligible. A Safe Browsing match adds 70 points and forces a warning. Incidents and pending warning details use Chrome local extension) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(storage. Incident writes are serialized. This is code evidence; it does not prove the installed browser bundle is current until we run it there.) Tj
+ET
+endstream
+endobj
+12 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 11 0 R >>
+endobj
+13 0 obj
+<< /Length 3160 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(PRODUCT DEMO - WARNING) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(05 / 08   3:20-4:35) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(LIVE PRODUCT DEMO ? PART 1) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Show the warning and the user's choice.) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 12 Tf
+1 0 0 1 50 397 Tm
+(Use the bundled local page with inert username and password fields; it does not submit or save entries.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 220 864 128 re B
+Q
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 65 328 Tm
+(LOCAL DEMO  |  127.0.0.1:4173  |  SAFE TEST FORM) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+64 313 m 895 313 l S
+Q
+q
+0.300 0.150 0.100 rg
+0.560 0.310 0.180 RG 1 w
+68 253 39 39 re B
+Q
+BT
+1.000 0.720 0.480 rg
+/F2 19 Tf
+1 0 0 1 82 265 Tm
+(!) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 17 Tf
+1 0 0 1 125 284 Tm
+(Pause before continuing) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 125 264 Tm
+(Risk indicators found on this page. Review the reasons before proceeding.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+125 230 125 22 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 9 Tf
+1 0 0 1 141 238 Tm
+(Leave this site) Tj
+ET
+q
+0.430 0.200 0.120 rg
+0.620 0.300 0.180 RG 1 w
+262 230 152 22 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 9 Tf
+1 0 0 1 276 238 Tm
+(Continue anyway) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 158 414 45 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 180 Tm
+(DEMO SETUP) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 12 Tf
+1 0 0 1 64 155 Tm
+(Start extension + local demo) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 135 Tm
+(Run npm run demo and open the local demo page.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+498 158 414 45 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 514 180 Tm
+(NARRATE) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 12 Tf
+1 0 0 1 514 155 Tm
+(No real credentials) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 514 135 Tm
+(Point out the detected types and the leave / continue choice.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  3:20-4:35) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(I am using the local demo page rather than a live malware sample. It is bundled with the project and the form is inert: it will not send or save anything. The extension sees a) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(username and password field and warns because the page is plain HTTP and contains sensitive field types. Notice the options: leave, or continue anyway. I will choose continue to) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(demonstrate what happens next. Action: click Continue anyway.) Tj
+ET
+endstream
+endobj
+14 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 13 0 R >>
+endobj
+15 0 obj
+<< /Length 3276 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(PRODUCT DEMO - RECOVERY) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(06 / 08   4:35-5:50) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(LIVE PRODUCT DEMO ? PART 2) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Continue creates a record you can act on.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 286 195 70 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 60 333 Tm
+(DECISION) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 11 Tf
+1 0 0 1 60 312 Tm
+(Continue anyway) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+267 286 195 70 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 279 333 Tm
+(INCIDENT) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 11 Tf
+1 0 0 1 279 312 Tm
+(Unresolved + risk evidence) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+486 286 195 70 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 498 333 Tm
+(DASHBOARD) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 11 Tf
+1 0 0 1 498 312 Tm
+(Reasons + exposure) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+705 286 195 70 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 717 333 Tm
+(NEXT STEPS) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 11 Tf
+1 0 0 1 717 312 Tm
+(Checklist + resolve) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 168 410 88 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 233 Tm
+(ON SCREEN) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 64 208 Tm
+(Open dashboard -> Unresolved) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 188 Tm
+(Show the new incident, reason, potential exposure, recommended action) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 175 Tm
+(and resolve control.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+502 168 410 88 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 518 233 Tm
+(IF THE DEMO FAILS) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 518 208 Tm
+(Report it honestly) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 518 188 Tm
+(Check the service-worker console for SECURITY_INCIDENT; do not claim the) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 518 175 Tm
+(save succeeded.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  4:35-5:50) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(Now I will open the dashboard. The incident should show the domain, time, severity, reasons, possible exposure and suggested actions. I can review the checklist and mark it) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(resolved. The record is local to this browser profile. This happens when someone continues through Threat Recovery's warning; it does not detect a bypass of Chrome's separate) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(interstitial. If the record does not appear, I will show the background console and say which step failed rather than imply success.) Tj
+ET
+endstream
+endobj
+16 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 15 0 R >>
+endobj
+17 0 obj
+<< /Length 2958 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(TAKEAWAY AND LIMITS) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(07 / 08   5:50-7:00) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(A PRACTICAL BOUNDARY) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Support recovery without claiming certainty.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 232 270 103 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 64 312 Tm
+(LOCAL BY DEFAULT) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 64 287 Tm
+(History + incidents) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 267 Tm
+(Stored in extension storage. Email is off) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 64 254 Tm
+(unless the user configures a relay.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+345 232 270 103 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 361 312 Tm
+(DATA BOUNDARY) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 361 287 Tm
+(No form values) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 361 267 Tm
+(Optional Safe Browsing lookup sends the page) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 361 254 Tm
+(URL to Google.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+642 232 270 103 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 658 312 Tm
+(KNOWN LIMITS) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 15 Tf
+1 0 0 1 658 287 Tm
+(Not a file scanner) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 658 267 Tm
+(Heuristics are indicators, not proof; Chrome) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 10 Tf
+1 0 0 1 658 254 Tm
+(warning bypass is not observed.) Tj
+ET
+q
+0.055 0.150 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 167 864 43 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 16 Tf
+1 0 0 1 68 183 Tm
+(ASSESS  ->  WARN  ->  RECORD  ->  RECOVER) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  5:50-7:00) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(Threat Recovery is a support layer, not a guarantee that every threat will be detected. Local heuristics can be wrong. Safe Browsing is optional and receives the URL when enabled.) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(We do not scan downloaded files or observe bypasses of Chrome's own warning. History and incidents stay in local extension storage by default. Optional email needs a user-) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 79 Tm
+(configured relay and is off by default. Our outcome is simple: assess, warn, record the choice, and give the person something useful to do next. Thank you.) Tj
+ET
+endstream
+endobj
+18 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 17 0 R >>
+endobj
+19 0 obj
+<< /Length 3317 >>
+stream
+q
+0.043 0.078 0.125 rg
+0 0 960 540 re f
+Q
+q
+0.330 0.840 0.750 rg
+0 535 960 5 re f
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 44 510 Tm
+(T  THREAT RECOVERY) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 690 510 Tm
+(Q&A) Tj
+ET
+q
+0.160 0.240 0.320 RG 1 w
+44 493 m 916 493 l S
+Q
+q
+0.160 0.240 0.320 RG 1 w
+44 36 m 916 36 l S
+Q
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 44 19 Tm
+(7-minute presentation + 3-minute Q&A) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F2 8 Tf
+1 0 0 1 844 19 Tm
+(08 / 08   7:00-10:00) Tj
+ET
+BT
+0.330 0.840 0.750 rg
+/F2 9 Tf
+1 0 0 1 48 459 Tm
+(THREE-MINUTE Q&A) Tj
+ET
+BT
+0.910 0.950 0.980 rg
+/F2 27 Tf
+1 0 0 1 48 421 Tm
+(Answers to likely questions.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 324 420 76 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 60 379 Tm
+(Is storage persistent?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 60 361 Tm
+(Current source uses chrome.storage.local for incidents and pending warnings. Confirm the) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 60 351 Tm
+(installed build in a fresh browser run.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+492 324 420 76 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 504 379 Tm
+(Why did WICAR show low / 25?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 504 361 Tm
+(That does not match current source. The old screenshot alone cannot tell whether Chrome had an) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 504 351 Tm
+(old bundle or stale assessment.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 233 420 76 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 60 288 Tm
+(Does every warning create an incident?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 60 270 Tm
+(No. Only Continue anyway on Threat Recovery's warning saves an incident. Leave does not.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+492 233 420 76 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 504 288 Tm
+(Does Safe Browsing always warn on a match?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 504 270 Tm
+(Yes. Current assessment adds 70 and sets shouldWarn when there is a match.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+48 142 420 76 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 60 197 Tm
+(Are form values collected?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 60 179 Tm
+(No. It detects field types, not what a person enters. Safe Browsing receives the URL when) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 60 169 Tm
+(enabled.) Tj
+ET
+q
+0.067 0.122 0.180 rg
+0.160 0.240 0.320 RG 1 w
+492 142 420 76 re B
+Q
+BT
+0.910 0.950 0.980 rg
+/F2 10 Tf
+1 0 0 1 504 197 Tm
+(What is not covered?) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 8 Tf
+1 0 0 1 504 179 Tm
+(Downloaded-file scanning, Chrome interstitial bypass detection, and a built-in email relay.) Tj
+ET
+q
+0.055 0.105 0.155 rg
+0.160 0.240 0.320 RG 1 w
+44 47 872 94 re B
+Q
+BT
+0.330 0.840 0.750 rg
+/F2 8 Tf
+1 0 0 1 58 122 Tm
+(SPEAKER NOTES  |  7:00-10:00) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 103 Tm
+(Use these answers as guardrails. If asked whether the live demo was tested, distinguish code inspection from a fresh browser run. A hostname heuristic is a risk indicator, not) Tj
+ET
+BT
+0.670 0.750 0.820 rg
+/F1 9 Tf
+1 0 0 1 58 91 Tm
+(proof that a site is malicious. If the demo has a problem, describe the failed step accurately.) Tj
+ET
+endstream
+endobj
+20 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 960 540] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 19 0 R >>
+endobj
+xref
+0 21
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000169 00000 n 
+0000000266 00000 n 
+0000000368 00000 n 
+0000003361 00000 n 
+0000003497 00000 n 
+0000005996 00000 n 
+0000006132 00000 n 
+0000009940 00000 n 
+0000010077 00000 n 
+0000013285 00000 n 
+0000013423 00000 n 
+0000016636 00000 n 
+0000016774 00000 n 
+0000020103 00000 n 
+0000020241 00000 n 
+0000023252 00000 n 
+0000023390 00000 n 
+0000026760 00000 n 
+trailer
+<< /Size 21 /Root 1 0 R >>
+startxref
+26898
+%%EOF
