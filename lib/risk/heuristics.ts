@@ -7,6 +7,9 @@ const SUSPICIOUS_HOST_PATTERNS = [
   /login|signin|verify|secure|account|update|banking|paypal|wallet/i,
 ];
 
+const THREAT_TERM_HOST_PATTERN =
+  /(?:^|[.-])(?:malware|phishing|ransomware|trojan|botnet|exploit|virus)(?:[.-]|$)/i;
+
 export interface HeuristicResult {
   score: number;
   reasons: RiskReason[];
@@ -123,6 +126,15 @@ export function evaluateHeuristics(
 
   try {
     const host = new URL(observation.url).hostname;
+    if (THREAT_TERM_HOST_PATTERN.test(host)) {
+      add(
+        "threat_keyword_host",
+        "Hostname contains a term commonly associated with malicious activity.",
+        45,
+        "malware"
+      );
+    }
+
     const looksSuspicious = SUSPICIOUS_HOST_PATTERNS.some((pattern) =>
       pattern.test(host)
     );
@@ -181,6 +193,7 @@ export function hasElevatedLocalRisk(
       "insecure_transport",
       "sensitive_over_http",
       "suspicious_url_pattern",
+      "threat_keyword_host",
       "deep_subdomain",
       "elevated_permissions",
     ].includes(reason.code)

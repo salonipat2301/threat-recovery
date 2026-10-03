@@ -12,6 +12,7 @@ export interface BrowserEvent {
   category: "anonymizer" | "other";
   riskScore: number;
   riskLevel: "none" | "low" | "medium" | "high" | "critical";
+  riskAssessedAt?: number;
 
   source: BrowserEventSource;
 }

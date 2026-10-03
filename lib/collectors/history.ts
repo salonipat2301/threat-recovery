@@ -20,7 +20,15 @@ export async function getRecentHistory(
     .filter(
       (item) =>
         item.url &&
-        item.lastVisitTime
+        item.lastVisitTime &&
+        (() => {
+          try {
+            const protocol = new URL(item.url).protocol;
+            return protocol === "http:" || protocol === "https:";
+          } catch {
+            return false;
+          }
+        })()
     )
     .map((item) => {
 

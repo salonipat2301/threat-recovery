@@ -113,6 +113,15 @@ export function showRiskWarningOverlay(
         font-size: 11px;
         color: #a1a1aa;
       }
+      .decision-error {
+        margin-top: 12px;
+        color: #fca5a5;
+        font-size: 12px;
+      }
+      button:disabled {
+        cursor: wait;
+        opacity: 0.6;
+      }
     </style>
     <div class="overlay" role="dialog" aria-modal="true" aria-label="Security warning">
       <div class="card">
@@ -143,17 +152,35 @@ export function showRiskWarningOverlay(
           Threat Recovery never stores passwords, card numbers, or form values.
           Continuing creates a local unresolved security incident.
         </div>
+        <div class="decision-error" role="alert" aria-live="polite"></div>
       </div>
     </div>
   `;
 
   const sendDecision = async (decision: "left" | "continued") => {
-    dismissRiskWarningOverlay();
-    await chrome.runtime.sendMessage({
-      type: "RISK_WARNING_DECISION",
-      requestId,
-      decision,
-    });
+    const buttons = [...shadow.querySelectorAll<HTMLButtonElement>("button")];
+    const errorElement = shadow.querySelector<HTMLElement>(".decision-error");
+    buttons.forEach((button) => (button.disabled = true));
+    if (errorElement) errorElement.textContent = "";
+
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: "RISK_WARNING_DECISION",
+        requestId,
+        decision,
+      });
+      if (!response?.ok) {
+        throw new Error(response?.error ?? "Your choice could not be saved.");
+      }
+      dismissRiskWarningOverlay();
+    } catch (error) {
+      if (errorElement) {
+        errorElement.textContent = error instanceof Error
+          ? `Could not save your choice: ${error.message}`
+          : "Could not save your choice. Please try again.";
+      }
+      buttons.forEach((button) => (button.disabled = false));
+    }
   };
 
   shadow

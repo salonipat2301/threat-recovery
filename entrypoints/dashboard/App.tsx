@@ -45,6 +45,21 @@ export default function App() {
 
   useEffect(() => {
     void refresh();
+
+    const handleStorageChange = (
+      changes: Record<string, chrome.storage.StorageChange>,
+      areaName: string
+    ) => {
+      if (
+        areaName === "local" &&
+        ("security_incidents" in changes || "browsing_history" in changes)
+      ) {
+        void refresh();
+      }
+    };
+
+    chrome.storage.onChanged.addListener(handleStorageChange);
+    return () => chrome.storage.onChanged.removeListener(handleStorageChange);
   }, []);
 
   const summary = useMemo(
@@ -188,7 +203,7 @@ export default function App() {
           <div className="history-empty">Visited sites will appear here.</div>
         ) : (
           <div className="history-list">
-            {history.slice(0, 8).map((event) => (
+            {history.slice(0, 10).map((event) => (
               <div className="history-row" key={event.id}>
                 <div className="history-site">
                   <strong>{event.domain}</strong>

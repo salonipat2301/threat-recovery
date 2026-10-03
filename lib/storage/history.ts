@@ -28,15 +28,20 @@ export async function updateBrowserEventRisk(
   verdict: RiskVerdict
 ): Promise<void> {
   const events = await listBrowsingHistory();
-  const index = events.findIndex((event) => event.url === url);
-  if (index < 0) return;
-  const current = events[index];
-  if (!current) return;
-  events[index] = {
-    ...current,
-    riskScore: verdict.score,
-    riskLevel: verdict.severity,
-  };
+  const riskAssessedAt = Date.now();
+  let updated = false;
+  for (let index = 0; index < events.length; index += 1) {
+    const current = events[index];
+    if (current?.url !== url) continue;
+    events[index] = {
+      ...current,
+      riskScore: verdict.score,
+      riskLevel: verdict.severity,
+      riskAssessedAt,
+    };
+    updated = true;
+  }
+  if (!updated) return;
   await chrome.storage.local.set({ [STORAGE_KEY]: events });
 }
 

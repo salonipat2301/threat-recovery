@@ -2,6 +2,13 @@ import type { SecurityIncident } from "../types/security-incident";
 import { browser as chrome } from "wxt/browser";
 
 const STORAGE_KEY = "security_incidents";
+let incidentWriteQueue: Promise<unknown> = Promise.resolve();
+
+function serializeIncidentWrite<T>(write: () => Promise<T>): Promise<T> {
+  const result = incidentWriteQueue.then(write);
+  incidentWriteQueue = result.catch(() => undefined);
+  return result;
+}
 
 export async function listIncidents(): Promise<SecurityIncident[]> {
   const result = await chrome.storage.local.get(STORAGE_KEY);
@@ -19,20 +26,22 @@ export async function listIncidents(): Promise<SecurityIncident[]> {
 export async function saveIncident(
   incident: SecurityIncident
 ): Promise<SecurityIncident> {
-  const incidents = await listIncidents();
-  const index = incidents.findIndex((item) => item.id === incident.id);
+  return serializeIncidentWrite(async () => {
+    const incidents = await listIncidents();
+    const index = incidents.findIndex((item) => item.id === incident.id);
 
-  if (index >= 0) {
-    incidents[index] = incident;
-  } else {
-    incidents.unshift(incident);
-  }
+    if (index >= 0) {
+      incidents[index] = incident;
+    } else {
+      incidents.unshift(incident);
+    }
 
-  await chrome.storage.local.set({
-    [STORAGE_KEY]: incidents,
+    await chrome.storage.local.set({
+      [STORAGE_KEY]: incidents,
+    });
+
+    return incident;
   });
-
-  return incident;
 }
 
 export async function updateIncident(
@@ -41,33 +50,37 @@ export async function updateIncident(
     Pick<SecurityIncident, "status" | "completedActions">
   >
 ): Promise<SecurityIncident | null> {
-  const incidents = await listIncidents();
-  const index = incidents.findIndex((item) => item.id === id);
-  const current = incidents[index];
+  return serializeIncidentWrite(async () => {
+    const incidents = await listIncidents();
+    const index = incidents.findIndex((item) => item.id === id);
+    const current = incidents[index];
 
-  if (index < 0 || !current) {
-    return null;
-  }
+    if (index < 0 || !current) {
+      return null;
+    }
 
-  const updated: SecurityIncident = {
-    ...current,
-    ...patch,
-    id: current.id,
-    createdAt: current.createdAt,
-    updatedAt: Date.now(),
-  };
+    const updated: SecurityIncident = {
+      ...current,
+      ...patch,
+      id: current.id,
+      createdAt: current.createdAt,
+      updatedAt: Date.now(),
+    };
 
-  incidents[index] = updated;
-  await chrome.storage.local.set({
-    [STORAGE_KEY]: incidents,
+    incidents[index] = updated;
+    await chrome.storage.local.set({
+      [STORAGE_KEY]: incidents,
+    });
+
+    return updated;
   });
-
-  return updated;
 }
 
 export async function clearIncidents(): Promise<void> {
-  await chrome.storage.local.set({
-    [STORAGE_KEY]: [],
+  await serializeIncidentWrite(async () => {
+    await chrome.storage.local.set({
+      [STORAGE_KEY]: [],
+    });
   });
 }
 

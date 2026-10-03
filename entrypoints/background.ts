@@ -36,10 +36,42 @@ interface TabState {
     requestId: string;
     observation: SiteObservation;
     verdict: RiskVerdict;
+    warningPage?: boolean;
   };
 }
 
 const tabStates = new Map<number, TabState>();
+const PENDING_WARNINGS_KEY = "pending_risk_warnings";
+
+type PendingWarning = NonNullable<TabState["pendingWarning"]>;
+
+async function findPendingWarning(requestId: string) {
+  const saved = await chrome.storage.local.get(PENDING_WARNINGS_KEY);
+  const warnings = (saved[PENDING_WARNINGS_KEY] ?? {}) as Record<string, PendingWarning>;
+  const match = Object.entries(warnings).find(([, pending]) => pending.requestId === requestId);
+  return match ? { tabId: Number(match[0]), pending: match[1] } : undefined;
+}
+
+async function savePendingWarning(tabId: number, pending: PendingWarning) {
+  const saved = await chrome.storage.local.get(PENDING_WARNINGS_KEY);
+  const warnings = (saved[PENDING_WARNINGS_KEY] ?? {}) as Record<string, PendingWarning>;
+  await chrome.storage.local.set({
+    [PENDING_WARNINGS_KEY]: { ...warnings, [String(tabId)]: pending },
+  });
+}
+
+async function getPendingWarning(tabId: number): Promise<PendingWarning | undefined> {
+  const saved = await chrome.storage.local.get(PENDING_WARNINGS_KEY);
+  const warnings = saved[PENDING_WARNINGS_KEY] as Record<string, PendingWarning> | undefined;
+  return warnings?.[String(tabId)];
+}
+
+async function clearPendingWarning(tabId: number) {
+  const saved = await chrome.storage.local.get(PENDING_WARNINGS_KEY);
+  const warnings = (saved[PENDING_WARNINGS_KEY] ?? {}) as Record<string, PendingWarning>;
+  delete warnings[String(tabId)];
+  await chrome.storage.local.set({ [PENDING_WARNINGS_KEY]: warnings });
+}
 
 async function reassessTab(tabId: number): Promise<{
   url?: string;
@@ -49,21 +81,65 @@ async function reassessTab(tabId: number): Promise<{
 
   const tab = await chrome.tabs.get(tabId);
   if (!tab.url) return { verdict: null };
+  const url = tab.url;
 
   const state = tabStates.get(tabId);
-  if (state?.url === tab.url && state.latestVerdict) {
-    return { url: tab.url, verdict: state.latestVerdict };
+  if (state?.url === url && state.latestVerdict) {
+    return { url, verdict: state.latestVerdict };
   }
 
   try {
     const response = await chrome.tabs.sendMessage(tabId, {
       type: "REASSESS_CURRENT_PAGE",
     });
-    return { url: tab.url, verdict: response?.verdict ?? null };
-  } catch {
-    // Browser-owned pages and pages without extension access cannot be scanned.
-    return { url: tab.url, verdict: null };
+    if (response?.verdict) {
+      return { url, verdict: response.verdict };
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    console.warn("Content script unavailable; falling back to URL-only assessment:", message);
+    console.warn("TAB_DEBUG:", {
+      tabId,
+      url,
+      status: tab.status,
+    });
   }
+
+  const observation = createSiteObservation(
+    url,
+    {
+      hasUsernameField: false,
+      hasPasswordField: false,
+      hasOtpField: false,
+      hasPaymentField: false,
+      hasFileUpload: false,
+    },
+    {
+      camera: "unknown",
+      microphone: "unknown",
+      geolocation: "unknown",
+      notifications: "unknown",
+    }
+  );
+
+  if (!observation) {
+    return { url, verdict: null };
+  }
+
+  console.log("URL_ONLY_ASSESSMENT", observation);
+  const verdict = await assessRisk(observation);
+  await updateBrowserEventRisk(url, verdict);
+  console.log("URL_ONLY_RISK_VERDICT", verdict);
+
+  tabStates.set(tabId, {
+    url,
+    pageSignals: observation.pageSignals,
+    permissions: observation.permissions,
+    latestVerdict: verdict,
+  });
+
+  return { url, verdict };
 }
 
 export default defineBackground(() => {
@@ -94,9 +170,13 @@ export default defineBackground(() => {
     }
 
     if (message?.type === "RISK_WARNING_DECISION") {
-      void handleWarningDecision(message, sender).then((incident) => {
-        sendResponse({ ok: true, incident });
-      });
+      void handleWarningDecision(message, sender)
+        .then((incident) => sendResponse({ ok: true, incident }))
+        .catch((error) => {
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          console.error("RISK_WARNING_DECISION_FAILED", errorMessage);
+          sendResponse({ ok: false, error: errorMessage });
+        });
       return true;
     }
 
@@ -130,7 +210,10 @@ export default defineBackground(() => {
     if (message?.type === "GET_TAB_RISK") {
       void reassessTab(message.tabId)
         .then(sendResponse)
-        .catch(() => sendResponse({ url: undefined, verdict: null }));
+        .catch((error) => {
+          console.error("GET_TAB_RISK_FAILED", error);
+          sendResponse({ url: undefined, verdict: null });
+        });
       return true;
     }
 
@@ -154,9 +237,25 @@ export default defineBackground(() => {
           const byUrl = new Map<string, (typeof savedEvents)[number]>();
           for (const event of [...browserEvents, ...savedEvents]) {
             const existing = byUrl.get(event.url);
-            if (!existing || event.timestamp >= existing.timestamp) {
+            if (!existing) {
               byUrl.set(event.url, event);
+              continue;
             }
+
+            const newest = event.timestamp >= existing.timestamp ? event : existing;
+            const existingAssessmentAt = existing.riskAssessedAt ?? 0;
+            const eventAssessmentAt = event.riskAssessedAt ?? 0;
+            const riskSource = eventAssessmentAt > existingAssessmentAt
+              ? event
+              : existingAssessmentAt > 0
+                ? existing
+                : newest;
+            byUrl.set(event.url, {
+              ...newest,
+              riskScore: riskSource.riskScore,
+              riskLevel: riskSource.riskLevel,
+              riskAssessedAt: riskSource.riskAssessedAt,
+            });
           }
           const merged = [...byUrl.values()].sort(
             (a, b) => b.timestamp - a.timestamp
@@ -170,6 +269,9 @@ export default defineBackground(() => {
 
   chrome.tabs.onRemoved.addListener((tabId) => {
     tabStates.delete(tabId);
+    void clearPendingWarning(tabId).catch((error) => {
+      console.warn("Failed to clear closed-tab warning", error);
+    });
   });
 });
 
@@ -245,7 +347,15 @@ async function handleSiteSignals(
   if (currentState?.url === url) {
     tabStates.set(tabId, { ...currentState, latestVerdict: verdict });
   }
+
   console.log("RISK_VERDICT", verdict);
+  console.log("WARNING_CHECK", {
+    url: observation.url,
+    score: verdict.score,
+    severity: verdict.severity,
+    shouldWarn: verdict.shouldWarn,
+    reasons: verdict.reasons,
+  });
 
   if (!verdict.shouldWarn) {
     return verdict;
@@ -259,15 +369,27 @@ async function handleSiteSignals(
   }
 
   const requestId = crypto.randomUUID();
+  await presentWarning(tabId, observation, verdict, requestId, warnKey, state);
 
-  tabStates.set(tabId, {
-    ...state,
-    lastWarnedKey: warnKey,
-    pendingWarning: {
-      requestId,
-      observation,
-      verdict,
-    },
+  return verdict;
+}
+
+async function presentWarning(
+  tabId: number,
+  observation: SiteObservation,
+  verdict: RiskVerdict,
+  requestId: string,
+  warnKey: string,
+  state: TabState
+) {
+  const pendingWarning: PendingWarning = { requestId, observation, verdict };
+  tabStates.set(tabId, { ...state, lastWarnedKey: warnKey, pendingWarning });
+  await savePendingWarning(tabId, pendingWarning);
+  console.info("WARNING_PRESENTATION_STARTED", {
+    tabId,
+    domain: observation.domain,
+    severity: verdict.severity,
+    score: verdict.score,
   });
 
   try {
@@ -277,18 +399,70 @@ async function handleSiteSignals(
       observation,
       verdict,
     });
+    console.info("WARNING_OVERLAY_DELIVERED", { tabId, requestId });
   } catch (error) {
-    console.warn("Failed to show warning overlay", error);
-    const failedState = tabStates.get(tabId);
-    if (failedState) {
-      tabStates.set(tabId, {
-        ...failedState,
-        pendingWarning: undefined,
-      });
-    }
+    const message = error instanceof Error ? error.message : String(error);
+    console.warn("CONTENT_WARNING_UNAVAILABLE", { tabId, requestId, message });
+    const warningPagePending = { ...pendingWarning, warningPage: true };
+    tabStates.set(tabId, { ...state, lastWarnedKey: warnKey, pendingWarning: warningPagePending });
+    await savePendingWarning(tabId, warningPagePending);
+    await chrome.tabs.update(tabId, {
+      url: `${chrome.runtime.getURL("/warning.html")}#${encodeURIComponent(requestId)}`,
+    });
+    console.info("WARNING_PAGE_OPENED", { tabId, requestId });
   }
+}
 
-  return verdict;
+async function assessNavigation(url: string, tabId: number) {
+  const observation = createSiteObservation(
+    url,
+    {
+      hasUsernameField: false,
+      hasPasswordField: false,
+      hasOtpField: false,
+      hasPaymentField: false,
+      hasFileUpload: false,
+    },
+    {
+      camera: "unknown",
+      microphone: "unknown",
+      geolocation: "unknown",
+      notifications: "unknown",
+    }
+  );
+  if (!observation) return;
+
+  try {
+    console.info("NAVIGATION_ASSESSMENT_STARTED", { tabId, url });
+    const verdict = await assessRisk(observation);
+    await updateBrowserEventRisk(url, verdict);
+    console.info("NAVIGATION_ASSESSMENT_RESULT", {
+      tabId,
+      url,
+      score: verdict.score,
+      severity: verdict.severity,
+      shouldWarn: verdict.shouldWarn,
+      threatIntel: verdict.threatIntel,
+      reasons: verdict.reasons,
+    });
+    const existing = tabStates.get(tabId);
+    const state: TabState = {
+      url,
+      pageSignals: existing?.url === url ? existing.pageSignals : observation.pageSignals,
+      permissions: existing?.url === url ? existing.permissions : observation.permissions,
+      latestVerdict: verdict,
+      lastWarnedKey: existing?.url === url ? existing.lastWarnedKey : undefined,
+      pendingWarning: existing?.url === url ? existing.pendingWarning : undefined,
+    };
+    tabStates.set(tabId, state);
+
+    if (!verdict.shouldWarn || state.pendingWarning) return;
+    const warnKey = `${observation.domain}|${verdict.severity}|${verdict.score}`;
+    if (state.lastWarnedKey === warnKey) return;
+    await presentWarning(tabId, observation, verdict, crypto.randomUUID(), warnKey, state);
+  } catch (error) {
+    console.error("NAVIGATION_ASSESSMENT_FAILED", { tabId, url, error });
+  }
 }
 
 async function handleWarningDecision(
@@ -298,24 +472,24 @@ async function handleWarningDecision(
   },
   sender: Browser.runtime.MessageSender
 ) {
-  const tabId = sender.tab?.id;
-
+  let tabId = sender.tab?.id;
+  let state = tabId === undefined ? undefined : tabStates.get(tabId);
+  let pending = state?.pendingWarning;
+  if (tabId === undefined || !pending) {
+    const stored = await findPendingWarning(message.requestId);
+    if (stored) {
+      tabId = stored.tabId;
+      pending = stored.pending;
+      state = tabStates.get(tabId);
+    }
+  }
   if (tabId === undefined) {
-    return null;
+    throw new Error("Could not identify the tab for this warning decision.");
   }
-
-  const state = tabStates.get(tabId);
-  const pending = state?.pendingWarning;
-
+  pending ??= await getPendingWarning(tabId);
   if (!pending || pending.requestId !== message.requestId) {
-    return null;
+    throw new Error("This warning is no longer pending. Reload the page and try again.");
   }
-
-  tabStates.set(tabId, {
-    ...state,
-    pendingWarning: undefined,
-  });
-
   console.log("USER_DECISION", {
     decision: message.decision,
     domain: pending.observation.domain,
@@ -323,6 +497,8 @@ async function handleWarningDecision(
   });
 
   if (message.decision === "left") {
+    if (state) tabStates.set(tabId, { ...state, pendingWarning: undefined });
+    await clearPendingWarning(tabId);
     try {
       await chrome.tabs.update(tabId, { url: "chrome://newtab/" });
     } catch {
@@ -336,117 +512,141 @@ async function handleWarningDecision(
     pending.verdict,
     "continued"
   );
+  if (!incident) {
+    throw new Error("The incident could not be saved locally.");
+  }
 
-  if (incident) {
-    console.log("SECURITY_INCIDENT", incident);
+  if (state) tabStates.set(tabId, { ...state, pendingWarning: undefined });
+  await clearPendingWarning(tabId).catch((error) => {
+    console.warn("Incident saved, but pending warning state could not be cleared", error);
+  });
 
+  console.log("SECURITY_INCIDENT", incident);
+  try {
     await queueHighRiskIncidentEmail(incident);
     void flushEmailNotificationQueue();
+  } catch (error) {
+    console.warn("Incident saved, but email notification could not be queued", error);
+  }
 
-    if (
-      incident.severity === "high" ||
-      incident.severity === "critical"
-    ) {
-      await chrome.notifications.create(incident.id, {
-        type: "basic",
-        iconUrl: "icon/128.png",
-        title: "Unresolved security risk",
-        message: `${incident.domain} marked ${incident.severity} after you continued.`,
-        priority: 2,
-      });
-    }
+  if (incident.severity === "high" || incident.severity === "critical") {
+    void chrome.notifications.create(incident.id, {
+      type: "basic",
+      iconUrl: "icon/128.png",
+      title: "Unresolved security risk",
+      message: `${incident.domain} marked ${incident.severity} after you continued.`,
+      priority: 2,
+    }).catch((error) => {
+      console.warn("Incident saved, but desktop notification failed", error);
+    });
+  }
+
+  if (pending.warningPage) {
+    await chrome.tabs.update(tabId, { url: pending.observation.url });
   }
 
   return incident;
 }
 
 function handleFullNavigation(
-  details: Browser.webNavigation.WebNavigationFramedCallbackDetails
-) {
+    details: Browser.webNavigation.WebNavigationFramedCallbackDetails
+  ) {
   if (details.frameId !== 0) {
     return;
   }
 
+  if (details.url.startsWith(chrome.runtime.getURL(""))) return;
+
   tabStates.delete(details.tabId);
+  void clearPendingWarning(details.tabId).catch((error) => {
+    console.warn("Failed to clear navigation warning state", error);
+  });
   logNavigation(details);
+  void assessNavigation(details.url, details.tabId);
 }
 
 function handleSpaNavigation(
-  details: Browser.webNavigation.WebNavigationFramedCallbackDetails
-) {
+    details: Browser.webNavigation.WebNavigationFramedCallbackDetails
+  ) {
   if (details.frameId !== 0) {
     return;
   }
 
+  if (details.url.startsWith(chrome.runtime.getURL(""))) return;
+
+  void clearPendingWarning(details.tabId).catch((error) => {
+    console.warn("Failed to clear SPA navigation warning state", error);
+  });
   logNavigation(details);
+  void assessNavigation(details.url, details.tabId);
 }
 
-function logNavigation(
-  details: Browser.webNavigation.WebNavigationFramedCallbackDetails
-) {
-  const event = createBrowserEvent(details.url, details.timeStamp);
+  function logNavigation(
+    details: Browser.webNavigation.WebNavigationFramedCallbackDetails
+  ) {
+    const event = createBrowserEvent(details.url, details.timeStamp);
 
-  if (!event) {
-    return;
-  }
-
-  void recordBrowserEvent(event);
-}
-
-function createBrowserEvent(
-  url: string,
-  timestamp: number
-): BrowserEvent | null {
-  try {
-    const parsedUrl = new URL(url);
-
-    if (
-      parsedUrl.protocol !== "http:" &&
-      parsedUrl.protocol !== "https:"
-    ) {
-      return null;
+    if (!event) {
+      return;
     }
 
-    return {
-      id: crypto.randomUUID(),
-      url,
-      domain: parsedUrl.hostname.replace(/^www\./, ""),
-      timestamp,
-      isHttps: parsedUrl.protocol === "https:",
-      category: classifyCategory(url),
-      riskScore: parsedUrl.protocol === "http:" ? 25 : 0,
-      riskLevel: parsedUrl.protocol === "http:" ? "low" : "none",
-      source: "live_navigation",
-    };
-  } catch {
-    return null;
+    void recordBrowserEvent(event);
   }
-}
 
-function createSiteObservation(
-  url: string,
-  pageSignals: SiteObservation["pageSignals"],
-  permissions: SiteObservation["permissions"]
-): SiteObservation | null {
-  try {
-    const parsedUrl = new URL(url);
+  function createBrowserEvent(
+    url: string,
+    timestamp: number
+  ): BrowserEvent | null {
+    try {
+      const parsedUrl = new URL(url);
 
-    if (
-      parsedUrl.protocol !== "http:" &&
-      parsedUrl.protocol !== "https:"
-    ) {
+      if (
+        parsedUrl.protocol !== "http:" &&
+        parsedUrl.protocol !== "https:"
+      ) {
+        return null;
+      }
+
+      return {
+        id: crypto.randomUUID(),
+        url,
+        domain: parsedUrl.hostname.replace(/^www\./, ""),
+        timestamp,
+        isHttps: parsedUrl.protocol === "https:",
+        category: classifyCategory(url),
+        riskScore: parsedUrl.protocol === "http:" ? 25 : 0,
+        riskLevel: parsedUrl.protocol === "http:" ? "low" : "none",
+        source: "live_navigation",
+      };
+    } catch {
       return null;
     }
-
-    return {
-      url,
-      domain: parsedUrl.hostname.replace(/^www\./, ""),
-      timestamp: Date.now(),
-      isHttps: parsedUrl.protocol === "https:",
-      pageSignals,
-      permissions,
-    };
-  } catch {
-    return null;
   }
-}
+
+  function createSiteObservation(
+    url: string,
+    pageSignals: SiteObservation["pageSignals"],
+    permissions: SiteObservation["permissions"]
+  ): SiteObservation | null {
+    try {
+      const parsedUrl = new URL(url);
+
+      if (
+        parsedUrl.protocol !== "http:" &&
+        parsedUrl.protocol !== "https:"
+      ) {
+        return null;
+      }
+
+      return {
+        url,
+        domain: parsedUrl.hostname.replace(/^www\./, ""),
+        timestamp: Date.now(),
+        isHttps: parsedUrl.protocol === "https:",
+        pageSignals,
+        permissions,
+      };
+    } catch {
+      return null;
+    }
+  }
